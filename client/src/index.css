@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Refined Minimal Palette */
+  --color-primary: #4f46e5;
+  /* Indigo 600 - Primary Action */
+  --color-primary-soft: #e0e7ff;
+  /* Indigo 100 - Backgrounds */
+
+  --color-text-main: #1e293b;
+  /* Slate 800 - Headings */
+  --color-text-muted: #64748b;
+  /* Slate 500 - Secondary */
+  --color-text-light: #94a3b8;
+  /* Slate 400 - Tertiary */
+
+  --color-bg-body: #f8fafc;
+  /* Slate 50 - Main BG */
+  --color-surface: #ffffff;
+
+  --color-accent-pro: #d4af37;
+  /* Gold - Pro features */
+
+  /* Spacing */
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.03) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-xl shadow-slate-200/50;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-lg border border-white/50 shadow-sm shadow-slate-200/40 transition-all duration-300 hover:shadow-md hover:shadow-indigo-500/5 hover:-translate-y-1 hover:bg-white/90;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3.5 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all duration-200 text-slate-700 placeholder:text-slate-400 font-medium;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3.5 bg-indigo-600 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 hover:shadow-indigo-500/30 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 rounded-xl transition-all duration-200 font-medium;
+  }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.2) 20%,
+        rgba(255, 255, 255, 0.5) 60%,
+        rgba(255, 255, 255, 0));
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
