@@ -56,63 +56,76 @@ export default function JournalPage() {
     ];
 
     return (
-        <div className="max-w-6xl mx-auto h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-8">
+        <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-8 p-4">
 
             {/* Left: Writing Area */}
             <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex-1 flex flex-col glass-panel rounded-3xl p-8 relative overflow-hidden"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="flex-[2] flex flex-col bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-10 relative overflow-hidden shadow-2xl shadow-black/40 group"
             >
-                {/* Decorative background gradient */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2" />
+                {/* Ambient Glows */}
+                <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-teal-500/30 transition-colors duration-700" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-indigo-500/30 transition-colors duration-700" />
 
-                <header className="flex justify-between items-start mb-6">
+                <header className="flex justify-between items-start mb-8 relative z-10">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                            <PenLine className="text-indigo-600" /> Daily Reflection
+                        <h1 className="text-4xl font-bold text-white tracking-tight flex items-center gap-4 mb-2">
+                            Daily Reflection
                         </h1>
-                        <p className="text-slate-500 mt-1">{format(new Date(), 'EEEE, MMMM do, yyyy')}</p>
+                        <p className="text-teal-200/60 font-medium text-lg tracking-wide">{format(new Date(), 'EEEE, MMMM do, yyyy')}</p>
                     </div>
-                </header>
 
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="bg-white/50 p-2 rounded-2xl flex gap-2">
+                    <div className="bg-black/20 backdrop-blur-md p-1.5 rounded-2xl flex gap-1 border border-white/5">
                         {moodOptions.map((option) => (
                             <button
                                 key={option.value}
                                 onClick={() => setMood(option.value)}
-                                className={`p-3 rounded-xl transition-all duration-300 ${mood === option.value
-                                    ? `${option.bg} ${option.color} ${option.border} border-2 shadow-sm scale-110`
-                                    : 'text-slate-400 hover:bg-slate-50'
+                                className={`p-3 rounded-xl transition-all duration-300 relative group/icon ${mood === option.value
+                                        ? 'bg-gradient-to-br from-teal-500/20 to-teal-900/40 text-teal-300 shadow-inner'
+                                        : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                     }`}
                             >
-                                <option.icon size={24} strokeWidth={mood === option.value ? 2.5 : 2} />
+                                <option.icon size={28} strokeWidth={mood === option.value ? 2.5 : 1.5} className="relative z-10" />
+                                {mood === option.value && (
+                                    <motion.div
+                                        layoutId="activeMood"
+                                        className="absolute inset-0 bg-teal-400/10 rounded-xl blur-sm"
+                                    />
+                                )}
                             </button>
                         ))}
                     </div>
-                    {/* Placeholder for Habit Link - waiting for API support or props */}
-                    <div className="flex-1"></div>
+                </header>
+
+                <div className="flex-1 relative z-10 group/textarea">
+                    <textarea
+                        className="w-full h-full bg-transparent border-none resize-none focus:ring-0 outline-none text-xl md:text-2xl text-slate-200 font-serif leading-relaxed placeholder:text-slate-600/50 selection:bg-teal-500/30"
+                        placeholder="Clear your mind. What's on your thoughts today?"
+                        value={content}
+                        onChange={e => setContent(e.target.value)}
+                    ></textarea>
                 </div>
 
-                <textarea
-                    className="flex-1 w-full bg-transparent border-none resize-none focus:ring-0 outline-none text-lg text-slate-700 font-serif leading-loose placeholder:text-slate-300"
-                    placeholder="Clear your mind. What's on your thoughts today?"
-                    value={content}
-                    onChange={e => setContent(e.target.value)}
-                ></textarea>
+                <div className="flex justify-between items-center mt-6 relative z-10 pt-6 border-t border-white/5">
+                    <span className="text-slate-500 text-sm font-medium">
+                        {content.length > 0 ? `${content.split(/\s+/).filter(w => w.length > 0).length} words` : 'Start writing...'}
+                    </span>
 
-                <div className="flex justify-end mt-4">
                     <button
                         onClick={handleSave}
                         disabled={isSaving}
                         className={`
-                            px-8 py-3 rounded-xl font-bold text-white flex items-center gap-2 transition-all duration-300 shadow-lg
-                            ${isSaving ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30 active:scale-95'}
+                            px-8 py-3.5 rounded-xl font-bold text-white flex items-center gap-3 transition-all duration-300 shadow-lg border border-white/10
+                            ${isSaving
+                                ? 'bg-emerald-500/80 shadow-emerald-500/20 cursor-wait'
+                                : 'bg-gradient-to-r from-teal-500 to-indigo-600 hover:scale-[1.02] hover:shadow-teal-500/30 active:scale-95'
+                            }
                         `}
                     >
                         {isSaving ? <CheckIcon className="animate-in zoom-in" /> : <Save size={20} />}
-                        {isSaving ? 'Saved' : 'Save Entry'}
+                        <span className="tracking-wide">{isSaving ? 'Saved' : 'Save Entry'}</span>
                     </button>
                 </div>
             </motion.div>
@@ -121,11 +134,17 @@ export default function JournalPage() {
             <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="w-full md:w-80 lg:w-96 flex flex-col gap-4"
+                transition={{ delay: 0.2 }}
+                className="flex-1 max-w-md flex flex-col gap-6"
             >
-                <h2 className="text-xl font-bold text-slate-800 px-2">Recent Entries</h2>
-                <div className="flex-1 overflow-y-auto pr-2 space-y-4 pb-4">
+                <div className="flex items-center justify-between px-2">
+                    <h2 className="text-2xl font-bold text-white tracking-tight">Recent Entries</h2>
+                    <div className="p-2 bg-white/5 rounded-lg border border-white/5 text-slate-400">
+                        <Calendar size={18} />
+                    </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar pb-4">
                     <AnimatePresence>
                         {entries.length > 0 ? (
                             entries.map((entry, idx) => {
@@ -136,35 +155,37 @@ export default function JournalPage() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.05 }}
-                                        className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow cursor-default group"
+                                        className="bg-slate-900/40 backdrop-blur-md p-6 rounded-2xl border border-white/5 hover:border-teal-500/30 hover:bg-slate-800/60 transition-all duration-300 group cursor-pointer"
                                     >
-                                        <div className="flex justify-between items-center mb-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 font-bold text-xs shadow-inner">
-                                                    {format(new Date(entry.entry_date), 'dd')}
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex flex-col items-center justify-center w-12 h-12 rounded-2xl bg-white/5 border border-white/5 group-hover:border-teal-500/30 transition-colors">
+                                                    <span className="text-xs font-bold text-teal-400 uppercase">{format(new Date(entry.entry_date), 'MMM')}</span>
+                                                    <span className="text-lg font-bold text-white">{format(new Date(entry.entry_date), 'dd')}</span>
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{format(new Date(entry.entry_date), 'MMM')}</span>
-                                                    <span className="text-sm font-semibold text-slate-700">{format(new Date(entry.entry_date), 'EEEE')}</span>
+                                                <div>
+                                                    <span className="block text-sm font-medium text-slate-400 mb-0.5">{format(new Date(entry.entry_date), 'EEEE')}</span>
+                                                    <span className="text-xs text-slate-500">{format(new Date(entry.entry_date), 'h:mm a')}</span>
                                                 </div>
                                             </div>
-                                            <MoodIcon size={20} className={
-                                                entry.mood === 'happy' ? 'text-emerald-500' :
-                                                    entry.mood === 'sad' ? 'text-rose-500' : 'text-amber-500'
-                                            } />
+                                            <div className={`p-2 rounded-xl bg-white/5 ${entry.mood === 'happy' ? 'text-emerald-400' :
+                                                    entry.mood === 'sad' ? 'text-rose-400' : 'text-amber-400'
+                                                }`}>
+                                                <MoodIcon size={18} />
+                                            </div>
                                         </div>
-                                        <div className="pl-12">
-                                            <p className="text-slate-600 font-serif text-sm line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
-                                                {entry.content}
-                                            </p>
-                                        </div>
+                                        <p className="text-slate-300 font-serif text-sm leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300 border-l-2 border-white/5 pl-4 group-hover:border-teal-500/30">
+                                            {entry.content}
+                                        </p>
                                     </motion.div>
                                 );
                             })
                         ) : (
-                            <div className="text-center py-10 opacity-50">
-                                <Calendar size={48} className="mx-auto mb-3 text-slate-300" />
-                                <p>No entries yet.</p>
+                            <div className="text-center py-20 opacity-50 flex flex-col items-center">
+                                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 text-slate-500">
+                                    <PenLine size={24} />
+                                </div>
+                                <p className="text-slate-400 font-medium">No entries yet. Start writing!</p>
                             </div>
                         )}
                     </AnimatePresence>

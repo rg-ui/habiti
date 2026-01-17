@@ -21,6 +21,7 @@ app.use('/habits', require('./routes/habits'));
 app.use('/journal', require('./routes/journal'));
 app.use('/analytics', require('./routes/analytics'));
 app.use('/admin', require('./routes/admin'));
+app.use('/chat', require('./routes/chat'));
 
 app.get('/', (req, res) => {
     res.send('Habit Tracker API is running');

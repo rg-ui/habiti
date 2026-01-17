@@ -1,31 +1,18 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Sun, Target, Sparkles, Quote } from 'lucide-react';
+import { Plus, X, Target, Zap, AlertCircle } from 'lucide-react';
 import api from '../utils/api';
-import HabitCard from '../components/HabitCard';
+import HabitRow from '../components/HabitRow';
 import UserAvatar from '../components/UserAvatar';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const QUOTES = [
-    "We are what we repeatedly do.",
-    "Small steps every day.",
-    "Focus on the identity, not the goal.",
-    "Habits overlap identity.",
-    "Progress, not perfection."
-];
-
 export default function Dashboard() {
     const [habits, setHabits] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [newHabit, setNewHabit] = useState({ title: '', description: '', identity_goal: '', color: '#3B82F6', goal_frequency: 'daily' });
+    const [newHabit, setNewHabit] = useState({ title: '', description: '', identity_goal: '', color: '#14b8a6', goal_frequency: 'daily' });
     const [user, setUser] = useState({ username: 'Friend', is_pro: false });
-    const [stats, setStats] = useState({ total_completions: 0, current_streak: 0 });
-
-    // Deterministic quote based on day
-    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-    const dailyQuote = QUOTES[dayOfYear % QUOTES.length];
 
     // Fetch user from local storage
     useEffect(() => {
@@ -60,7 +47,7 @@ export default function Dashboard() {
             });
 
             setHabits(processedHabits);
-            setStats({ total_completions: totalC, current_streak: 0 }); // Todo: calculate real streak
+            setHabits(processedHabits);
         } catch (err) {
             console.error("Failed to fetch data", err);
         }
@@ -82,7 +69,7 @@ export default function Dashboard() {
         try {
             await api.post('/habits', newHabit);
             setShowModal(false);
-            setNewHabit({ title: '', description: '', identity_goal: '', color: '#3B82F6', goal_frequency: 'daily' });
+            setNewHabit({ title: '', description: '', identity_goal: '', color: '#14b8a6', goal_frequency: 'daily' });
             fetchData();
         } catch (err) {
             console.error(err);
@@ -108,90 +95,45 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto pb-10">
-            {/* Premium Header */}
-            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-16 gap-8 relative">
-
-                {/* Greeting & Avatar */}
-                <div className="flex items-center gap-6">
-                    <UserAvatar username={user.username} size="xl" />
-                    <div>
-                        <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-sm font-bold text-indigo-500 mb-1 uppercase tracking-widest flex items-center gap-2"
-                        >
-                            <Sparkles size={14} />
-                            {user.is_pro ? "Premium Member" : "Free Plan"}
-                        </motion.div>
-                        <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                            Hello, <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">{user.username}</span>
-                        </h1>
-                        <p className="text-slate-500 font-medium text-lg mt-1 flex items-center gap-2">
-                            Ready to build your legacy?
-                        </p>
-                    </div>
+        <div className="max-w-7xl mx-auto pb-20">
+            {/* Sprint Header */}
+            <header className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                <div>
+                    <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Dashboard</h1>
+                    <p className="text-slate-300 font-medium">
+                        You have <span className="text-teal-400 font-bold">{habits.length} active habits</span> this sprint.
+                    </p>
                 </div>
 
-                {/* Daily Wisdom Card (Gimic) */}
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="hidden lg:flex flex-col items-start p-5 bg-white/60 backdrop-blur-md rounded-2xl border border-white/60 shadow-lg shadow-indigo-100/50 max-w-sm"
-                >
-                    <Quote size={20} className="text-indigo-400 mb-2 fill-indigo-50" />
-                    <p className="text-slate-600 italic font-medium">"{dailyQuote}"</p>
-                    <div className="mt-3 flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                        <Sun size={12} className="text-amber-400" /> Daily Wisdom
+                <div className="flex items-center gap-4">
+                    {/* "Sprint" Progress Chart Placeholder */}
+                    <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-900/50 rounded-xl border border-white/5">
+                        <div className="flex items-end gap-1 h-8">
+                            {[40, 70, 50, 90, 60, 80, 100].map((h, i) => (
+                                <div key={i} className="w-2 bg-teal-500 rounded-t-sm opacity-50" style={{ height: `${h}%` }} />
+                            ))}
+                        </div>
+                        <div className="ml-2 text-right">
+                            <span className="block text-xs text-slate-300 font-bold uppercase">Consistency</span>
+                            <span className="block text-sm font-bold text-white">82%</span>
+                        </div>
                     </div>
-                </motion.div>
 
-                {/* Mobile Action */}
-                <button
-                    onClick={() => setShowModal(true)}
-                    className={`lg:hidden w-full flex items-center justify-center gap-2 px-6 py-4 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95 ${user.is_pro ? 'bg-gradient-to-r from-amber-400 to-orange-500 shadow-amber-500/20' : 'bg-slate-900 shadow-slate-900/20'}`}
-                >
-                    <Plus size={20} strokeWidth={3} /> New Habit
-                </button>
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="btn-primary"
+                    >
+                        <Plus size={20} />
+                        <span className="hidden sm:inline">New Habit</span>
+                    </button>
+                </div>
             </header>
 
-            {/* Stats Row (Mini Gimic) */}
-            <div className="flex gap-6 mb-10 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide">
-                <div className="flex items-center gap-4 px-6 py-3 bg-white rounded-2xl shadow-sm border border-slate-100 min-w-max">
-                    <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                        <Target size={20} />
-                    </div>
-                    <div>
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Active Habits</p>
-                        <p className="text-xl font-bold text-slate-800">{habits.length}</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-4 px-6 py-3 bg-white rounded-2xl shadow-sm border border-slate-100 min-w-max">
-                    <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-                        <Sparkles size={20} />
-                    </div>
-                    <div>
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Reps</p>
-                        <p className="text-xl font-bold text-slate-800">{stats.total_completions}</p>
-                    </div>
-                </div>
-
-                {/* Desktop Action */}
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="hidden lg:flex ml-auto items-center gap-3 px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow-lg shadow-slate-900/20 hover:shadow-xl hover:shadow-slate-900/10 hover:-translate-y-1 transition-all duration-300"
-                >
-                    <Plus size={20} />
-                    <span>Create Habit</span>
-                </button>
-            </div>
-
-            {/* Habits Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Habits List (The Sprint Look) */}
+            <div className="space-y-4">
                 <AnimatePresence mode='popLayout'>
                     {habits.map(habit => (
-                        <HabitCard
+                        <HabitRow
                             key={habit.id}
                             habit={habit}
                             onToggle={handleToggleHabit}
@@ -204,15 +146,15 @@ export default function Dashboard() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="col-span-full py-24 bg-white/40 border border-dashed border-slate-200 rounded-[2rem] flex flex-col items-center justify-center text-center backdrop-blur-sm"
+                        className="py-32 flex flex-col items-center justify-center text-center"
                     >
-                        <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rotate-3">
-                            <Plus size={32} className="text-slate-200" />
+                        <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mb-6 shadow-2xl shadow-black/50 border border-white/5">
+                            <Target size={40} className="text-slate-700" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-2">Start your journey</h3>
-                        <p className="text-slate-400 max-w-xs mx-auto mb-8 leading-relaxed">Small habits repeated daily transform your identity.</p>
-                        <button onClick={() => setShowModal(true)} className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors flex items-center gap-2">
-                            Create first habit <Target size={16} />
+                        <h3 className="text-2xl font-bold text-white mb-2">No active sprints</h3>
+                        <p className="text-slate-300 max-w-sm mx-auto mb-8">Create your first habit to start tracking your sprint progress.</p>
+                        <button onClick={() => setShowModal(true)} className="text-teal-400 font-bold hover:text-teal-300 transition-colors flex items-center gap-2 text-lg">
+                            Create Habit <Plus size={20} />
                         </button>
                     </motion.div>
                 )}
@@ -221,83 +163,67 @@ export default function Dashboard() {
             {/* Create Modal */}
             <AnimatePresence>
                 {showModal && (
-                    <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden"
+                            className="bg-slate-950 border border-white/10 rounded-3xl shadow-2xl shadow-black max-w-md w-full p-8 relative overflow-hidden"
                         >
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-50 transition-colors"
+                                className="absolute top-4 right-4 text-slate-500 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
                             >
-                                <X size={24} />
+                                <X size={20} />
                             </button>
 
-                            <div className="mb-6">
-                                <h2 className="text-2xl font-bold text-slate-800">New Habit</h2>
-                                <p className="text-slate-500 text-sm">Build the identity you want.</p>
-                            </div>
+                            <h2 className="text-2xl font-bold text-white mb-6">New Habit Sprint</h2>
 
                             {error && (
-                                <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100 flex items-center gap-2">
-                                    <X size={16} /> {error}
+                                <div className="mb-6 p-4 bg-red-500/10 text-red-500 text-sm rounded-xl border border-red-500/20 flex items-center gap-3">
+                                    <AlertCircle size={18} /> {error}
                                 </div>
                             )}
 
-                            <form onSubmit={handleCreateHabit} className="space-y-5">
+                            <form onSubmit={handleCreateHabit} className="space-y-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-2">
-                                        <Target size={16} className="text-indigo-500" /> Identity Goal
-                                    </label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Identity Goal</label>
                                     <input
-                                        className="input-field"
+                                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors text-sm font-medium placeholder:text-slate-700"
                                         value={newHabit.identity_goal}
                                         onChange={e => setNewHabit({ ...newHabit, identity_goal: e.target.value })}
-                                        placeholder="e.g. I want to become a Runner"
+                                        placeholder="e.g. Become a Runner"
                                         autoFocus
                                     />
-                                    <p className="text-xs text-slate-400 mt-1">Who do you want to become?</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Habit Title</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Habit Name</label>
                                     <input
-                                        className="input-field"
+                                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors text-lg font-bold placeholder:text-slate-700"
                                         value={newHabit.title}
                                         onChange={e => setNewHabit({ ...newHabit, title: e.target.value })}
-                                        placeholder="e.g. Run 5k"
+                                        placeholder="e.g. 5k Run"
                                         required
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Description (Optional)</label>
-                                    <textarea
-                                        className="input-field min-h-[80px]"
-                                        value={newHabit.description}
-                                        onChange={e => setNewHabit({ ...newHabit, description: e.target.value })}
-                                        placeholder="Details about your habit..."
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Color</label>
-                                        <div className="flex items-center gap-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Color Theme</label>
+                                        <div className="h-12 flex items-center bg-slate-900/50 rounded-xl px-2 border border-white/10">
                                             <input
                                                 type="color"
-                                                className="w-full h-12 rounded-xl cursor-pointer bg-transparent"
+                                                className="w-full h-8 bg-transparent cursor-pointer rounded-lg"
                                                 value={newHabit.color}
                                                 onChange={e => setNewHabit({ ...newHabit, color: e.target.value })}
                                             />
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Frequency</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Frequency</label>
                                         <select
-                                            className="input-field h-12 py-0"
+                                            className="w-full h-12 bg-slate-900/50 border border-white/10 rounded-xl px-4 text-white focus:outline-none focus:border-amber-500 transition-colors text-sm font-medium appearance-none"
                                             value={newHabit.goal_frequency}
                                             onChange={e => setNewHabit({ ...newHabit, goal_frequency: e.target.value })}
                                         >
@@ -307,11 +233,9 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                <div className="pt-2">
-                                    <button type="submit" className="btn-primary w-full">
-                                        Start Building Habit
-                                    </button>
-                                </div>
+                                <button type="submit" className="w-full py-4 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-teal-500/20 active:scale-[0.98] mt-4">
+                                    Create Sprint
+                                </button>
                             </form>
                         </motion.div>
                     </div>

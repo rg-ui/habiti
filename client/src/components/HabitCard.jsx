@@ -17,22 +17,22 @@ export default function HabitCard({ habit, onToggle, onEdit }) {
             layout
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card p-5 rounded-2xl relative group bg-white hover:bg-white/80 transition-all duration-300 border border-slate-100/50 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.02)] hover:shadow-xl hover:shadow-indigo-500/5"
+            className="glass-card p-5 rounded-2xl relative group bg-slate-900 border border-white/5 shadow-lg shadow-black/20 hover:border-amber-500/20 hover:shadow-amber-500/10 transition-all duration-300"
         >
             <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                     {habit.identity_goal && (
                         <div className="flex items-center gap-1.5 mb-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{habit.identity_goal}</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{habit.identity_goal}</span>
                         </div>
                     )}
-                    <h3 className="font-bold text-slate-800 text-lg leading-tight mb-1">{habit.title}</h3>
-                    <p className="text-slate-400 text-sm font-medium line-clamp-1">{habit.description || 'Daily commitment'}</p>
+                    <h3 className="font-bold text-slate-200 text-lg leading-tight mb-1">{habit.title}</h3>
+                    <p className="text-slate-500 text-sm font-medium line-clamp-1">{habit.description || 'Daily commitment'}</p>
                 </div>
                 <button
                     onClick={(e) => { e.stopPropagation(); onEdit(habit); }}
-                    className="text-slate-200 hover:text-indigo-500 transition-colors bg-transparent hover:bg-indigo-50 p-2 rounded-xl"
+                    className="text-slate-600 hover:text-amber-500 transition-colors bg-transparent hover:bg-amber-500/10 p-2 rounded-xl"
                 >
                     <MoreHorizontal size={18} />
                 </button>
@@ -41,19 +41,19 @@ export default function HabitCard({ habit, onToggle, onEdit }) {
             <div className="mt-8 flex items-end justify-between">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <Flame size={16} className={`${streak > 0 ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`} />
-                        <span className={`text-2xl font-bold ${streak > 0 ? 'text-slate-800' : 'text-slate-300'}`}>{streak}</span>
+                        <Flame size={16} className={`${streak > 0 ? 'text-amber-500 fill-amber-500' : 'text-slate-700'}`} />
+                        <span className={`text-2xl font-bold ${streak > 0 ? 'text-white' : 'text-slate-600'}`}>{streak}</span>
                     </div>
-                    <span className="text-xs font-semibold text-slate-400 pl-6">Day streak</span>
+                    <span className="text-xs font-semibold text-slate-600 pl-6">Day streak</span>
                 </div>
 
                 <button
                     onClick={() => onToggle(habit.id)}
                     className={`
-                      relative w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500
+                      relative w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 border
                       ${isCompletedToday
-                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 rotate-0'
-                            : 'bg-slate-50 text-slate-200 hover:bg-indigo-50 hover:text-indigo-300 hover:scale-105'
+                            ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/30 border-amber-400/50'
+                            : 'bg-slate-800/50 border-white/5 text-slate-600 hover:bg-slate-800 hover:text-amber-400 hover:border-amber-500/30'
                         }
                     `}
                 >
@@ -81,9 +81,9 @@ export default function HabitCard({ habit, onToggle, onEdit }) {
             </div>
 
             {/* Minimal Progress Line */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-50 overflow-hidden rounded-b-2xl">
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-800/50 overflow-hidden rounded-b-2xl">
                 <motion.div
-                    className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 opacity-30"
+                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500 opacity-50"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 1.5, ease: "circOut" }}

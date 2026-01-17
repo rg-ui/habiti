@@ -1,88 +1,78 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
 
-  /* Refined Minimal Palette */
-  --color-primary: #4f46e5;
-  /* Indigo 600 - Primary Action */
-  --color-primary-soft: #e0e7ff;
-  /* Indigo 100 - Backgrounds */
+  /* Fresh Teal/Mint Palette - Matches Logo Vibe */
 
-  --color-text-main: #1e293b;
-  /* Slate 800 - Headings */
-  --color-text-muted: #64748b;
-  /* Slate 500 - Secondary */
-  --color-text-light: #94a3b8;
-  /* Slate 400 - Tertiary */
+  /* Overriding Slate with a cooler, deep teal-gray */
+  --color-slate-950: #042f2e;
+  /* Teal 950 - Deepest Background */
+  --color-slate-900: #115e59;
+  /* Teal 800 - Surface */
+  --color-slate-800: #134e4a;
+  /* Teal 900 - Darker Surface */
 
-  --color-bg-body: #f8fafc;
-  /* Slate 50 - Main BG */
-  --color-surface: #ffffff;
+  /* Primary Brand Colors */
+  --color-teal-500: #14b8a6;
+  /* Main Teal */
+  --color-teal-400: #2dd4bf;
+  /* Bright Teal */
+  --color-teal-600: #0d9488;
+  /* Darker Teal */
 
-  --color-accent-pro: #d4af37;
-  /* Gold - Pro features */
+  --color-emerald-400: #34d399;
+  /* Mint Accent */
 
-  /* Spacing */
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  /* Semantic Variables */
+  --color-primary: var(--color-teal-500);
+  --color-primary-dark: var(--color-teal-600);
+  --color-primary-soft: #ccfbf1;
+  /* Light Mint */
+
+  --color-text-main: #ffffff;
+  /* Pure White for Headings/Highlighting */
+  --color-text-muted: #cbd5e1;
+  /* Slate 300 - Much brighter relative to bg */
+  --color-text-dim: #94a3b8;
+  /* Slate 400 */
+
+  --color-bg-body: #0f172a;
+  /* Slate 900 - keeping a neutral dark base lets the teal pop */
+  --color-surface: #1e293b;
+  /* Slate 800 */
+
+  --color-accent: var(--color-teal-400);
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700;
+    @apply bg-[#0b141a] text-slate-100 font-sans antialiased selection:bg-teal-500/30 selection:text-teal-400;
     background-image:
-      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.03) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(45, 212, 191, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.08) 0px, transparent 50%);
     background-attachment: fixed;
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-xl shadow-slate-200/50;
+    @apply bg-slate-900/40 backdrop-blur-xl border border-teal-500/10 shadow-2xl shadow-black/30;
   }
 
   .glass-card {
-    @apply bg-white/70 backdrop-blur-lg border border-white/50 shadow-sm shadow-slate-200/40 transition-all duration-300 hover:shadow-md hover:shadow-indigo-500/5 hover:-translate-y-1 hover:bg-white/90;
+    @apply bg-slate-800/30 backdrop-blur-md border border-white/5 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-teal-500/10 hover:-translate-y-1 hover:bg-slate-800/50 hover:border-teal-500/20;
   }
 
   .input-field {
-    @apply w-full px-4 py-3.5 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all duration-200 text-slate-700 placeholder:text-slate-400 font-medium;
+    @apply w-full px-4 py-3.5 bg-slate-900/50 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-200 text-slate-100 placeholder:text-slate-500 font-medium;
   }
 
   .btn-primary {
-    @apply px-6 py-3.5 bg-indigo-600 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 hover:shadow-indigo-500/30 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply px-6 py-3.5 bg-gradient-to-r from-teal-400 to-teal-500 text-slate-950 font-bold rounded-2xl shadow-lg shadow-teal-500/20 hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
   }
 
   .btn-ghost {
-    @apply px-4 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 rounded-xl transition-all duration-200 font-medium;
-  }
-
-  .shimmer {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .shimmer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(90deg,
-        rgba(255, 255, 255, 0) 0,
-        rgba(255, 255, 255, 0.2) 20%,
-        rgba(255, 255, 255, 0.5) 60%,
-        rgba(255, 255, 255, 0));
-    animation: shimmer 2s infinite;
-  }
-
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
-    }
+    @apply px-4 py-2 text-slate-400 hover:text-teal-400 hover:bg-slate-800/50 rounded-xl transition-all duration-200 font-medium;
   }
 }

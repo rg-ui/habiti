@@ -10,6 +10,9 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import AdminPage from './pages/AdminPage';
 import { LayoutDashboard, Book, BarChart2, LogOut, Star, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from './assets/logo.png';
+
+import Chatbot from './components/Chatbot';
 
 const ProtectedLayout = () => {
   const token = localStorage.getItem('token');
@@ -30,15 +33,12 @@ const ProtectedLayout = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#f8fafc]">
-      {/* Glassmorphic Sidebar */}
-      {/* Minimal Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-20 md:w-24 lg:w-72 bg-white/50 backdrop-blur-2xl border-r border-white/50 flex flex-col z-50 transition-all duration-500 shadow-2xl shadow-slate-200/50">
-        <div className="p-8 flex items-center justify-center lg:justify-start gap-4">
-          <div className="w-12 h-12 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-xl ring-4 ring-white/50">
-            H
-          </div>
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 hidden lg:block tracking-tight">Habiti</span>
+    <div className="min-h-screen flex bg-slate-950">
+      {/* Dark Glass Sidebar */}
+      <aside className="fixed left-0 top-0 h-full w-20 md:w-24 lg:w-72 bg-slate-900/40 backdrop-blur-xl border-r border-white/5 flex flex-col z-50 transition-all duration-500 shadow-2xl shadow-black/40">
+        <div className="p-8 flex items-center justify-center lg:justify-start gap-3">
+          <img src={logo} alt="Habiti" className="w-10 h-10 object-contain drop-shadow-md" />
+          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-slate-400 hidden lg:block tracking-tight font-sans">habiti</span>
         </div>
 
         <nav className="flex-1 px-4 py-8 space-y-3 flex flex-col items-center lg:items-stretch">
@@ -49,11 +49,11 @@ const ProtectedLayout = () => {
                 key={item.path}
                 to={item.path}
                 className={`relative flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group ${isActive
-                  ? 'text-indigo-600 bg-white shadow-md shadow-indigo-100/50 scale-[1.02]'
-                  : 'text-slate-400 hover:text-slate-900 hover:bg-white/60'
+                  ? 'text-teal-400 bg-white/5 shadow-md shadow-black/20 border border-white/5 scale-[1.02]'
+                  : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
                   }`}
               >
-                <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-indigo-50 text-indigo-600' : 'bg-transparent group-hover:bg-slate-100'}`}>
+                <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-teal-400/10 text-teal-400' : 'bg-transparent group-hover:bg-white/5'}`}>
                   <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
                 <span className="hidden lg:block font-medium text-sm tracking-wide">{item.label}</span>
@@ -61,7 +61,7 @@ const ProtectedLayout = () => {
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="absolute left-0 w-1 h-8 bg-indigo-600 rounded-r-full lg:hidden"
+                    className="absolute left-0 w-1 h-8 bg-teal-400 rounded-r-full lg:hidden"
                   />
                 )}
               </Link>
@@ -69,11 +69,11 @@ const ProtectedLayout = () => {
           })}
         </nav>
 
-        <div className="p-6 border-t border-slate-100/50">
+        <div className="p-6 border-t border-white/5">
           <button onClick={() => {
             localStorage.removeItem('token');
             window.location.href = '/login';
-          }} className="flex items-center gap-4 w-full px-4 py-3.5 rounded-2xl text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all duration-300 group justify-center lg:justify-start">
+          }} className="flex items-center gap-4 w-full px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 group justify-center lg:justify-start">
             <LogOut size={20} className="group-hover:scale-110 transition-transform" />
             <span className="hidden lg:block font-medium text-sm">Sign Out</span>
           </button>
@@ -94,6 +94,8 @@ const ProtectedLayout = () => {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <Chatbot />
     </div>
   );
 };

@@ -4,10 +4,21 @@ import api from '../utils/api';
 import AnalyticsChart from '../components/AnalyticsChart';
 import { TrendingUp, Award, Calendar, Lock, Brain, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
 export default function AnalyticsPage() {
     const [data, setData] = useState([]);
     const [weeklyData, setWeeklyData] = useState([]);
+    // Mock data for visualization if real data is empty (remove or adjust logic as needed)
+    // const [weeklyData, setWeeklyData] = useState([
+    //     { day_name: 'Mon', completed_count: 4 },
+    //     { day_name: 'Tue', completed_count: 6 },
+    //     { day_name: 'Wed', completed_count: 3 },
+    //     { day_name: 'Thu', completed_count: 8 },
+    //     { day_name: 'Fri', completed_count: 5 },
+    //     { day_name: 'Sat', completed_count: 2 },
+    //     { day_name: 'Sun', completed_count: 7 },
+    // ]);
     const [correlations, setCorrelations] = useState([]);
     const [user, setUser] = useState({ is_pro: false });
 
@@ -41,31 +52,31 @@ export default function AnalyticsPage() {
     const mostActive = data.length > 0 ? data.reduce((prev, current) => (parseInt(prev.completion_count) > parseInt(current.completion_count)) ? prev : current) : null;
 
     const ProFeatureLock = ({ title, description, icon: Icon }) => (
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-6 opacity-80">
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center text-center p-6">
-                <div className="bg-amber-100 p-3 rounded-full mb-3 text-amber-600">
+        <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-6 opacity-80 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center text-center p-6">
+                <div className="bg-teal-500/10 p-3 rounded-full mb-3 text-teal-400">
                     <Lock size={24} />
                 </div>
-                <h3 className="font-bold text-slate-800 text-lg">Unlock {title}</h3>
-                <p className="text-slate-500 text-sm mb-4 max-w-xs">{description}</p>
-                <Link to="/subscription" className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-lg text-sm transition-colors shadow-sm">
+                <h3 className="font-bold text-white text-lg">Unlock {title}</h3>
+                <p className="text-slate-400 text-sm mb-4 max-w-xs">{description}</p>
+                <Link to="/subscription" className="px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 hover:scale-105 active:scale-95 text-slate-950 font-bold rounded-lg text-sm transition-all shadow-lg shadow-teal-500/20">
                     Upgrade to Pro
                 </Link>
             </div>
             {/* Background elements to look 'busy' */}
             <div className="flex items-center gap-2 mb-4 opacity-30 blur-sm">
-                <Icon size={24} className="text-slate-400" />
-                <span className="font-bold text-slate-400">Hidden Data</span>
+                <Icon size={24} className="text-slate-500" />
+                <span className="font-bold text-slate-500">Hidden Data</span>
             </div>
-            <div className="h-32 bg-slate-200/50 rounded-xl blur-sm"></div>
+            <div className="h-32 bg-slate-800/30 rounded-xl blur-sm"></div>
         </div>
     );
 
     return (
         <div className="max-w-6xl mx-auto pb-10">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900">Progress Analytics</h1>
-                <p className="text-slate-500 mt-1">Visualize your consistency and growth.</p>
+                <h1 className="text-3xl font-bold text-white">Progress Analytics</h1>
+                <p className="text-slate-300 mt-1">Visualize your consistency and growth.</p>
             </header>
 
             {/* Basic Stats Row */}
@@ -73,7 +84,7 @@ export default function AnalyticsPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-6 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden"
+                    className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl p-6 text-white shadow-xl shadow-teal-500/20 relative overflow-hidden"
                 >
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <TrendingUp size={100} />
@@ -92,15 +103,15 @@ export default function AnalyticsPage() {
                     transition={{ delay: 0.1 }}
                     className="glass-card p-6 rounded-2xl"
                 >
-                    <div className="flex items-center gap-3 mb-4 text-emerald-600">
+                    <div className="flex items-center gap-3 mb-4 text-emerald-400">
                         <Award size={24} />
                         <span className="font-bold">Most Consistent</span>
                     </div>
                     <div>
-                        <p className="text-2xl font-bold text-slate-800 line-clamp-1">
+                        <p className="text-2xl font-bold text-white line-clamp-1">
                             {mostActive ? mostActive.title : 'N/A'}
                         </p>
-                        <p className="text-slate-500 font-medium mt-1">
+                        <p className="text-slate-300 font-medium mt-1">
                             {mostActive ? `${mostActive.completion_count} days completed` : 'Start tracking to see this'}
                         </p>
                     </div>
@@ -112,15 +123,15 @@ export default function AnalyticsPage() {
                     transition={{ delay: 0.2 }}
                     className="glass-card p-6 rounded-2xl"
                 >
-                    <div className="flex items-center gap-3 mb-4 text-amber-500">
+                    <div className="flex items-center gap-3 mb-4 text-teal-400">
                         <Calendar size={24} />
                         <span className="font-bold">Current Streak</span>
                     </div>
                     <div>
-                        <p className="text-2xl font-bold text-slate-800">
+                        <p className="text-2xl font-bold text-white">
                             {mostActive ? Math.min(mostActive.completion_count, 7) : 0} Days
                         </p>
-                        <p className="text-slate-500 font-medium mt-1">
+                        <p className="text-slate-300 font-medium mt-1">
                             Keep the momentum going!
                         </p>
                     </div>
@@ -135,7 +146,7 @@ export default function AnalyticsPage() {
                     transition={{ delay: 0.3 }}
                     className="glass-panel p-6 rounded-2xl"
                 >
-                    <h3 className="text-lg font-bold text-slate-700 mb-6 px-2">Completion Overview</h3>
+                    <h3 className="text-lg font-bold text-white mb-6 px-2">Completion Overview</h3>
                     <AnalyticsChart data={data} />
                 </motion.div>
 
@@ -148,25 +159,32 @@ export default function AnalyticsPage() {
                     {user.is_pro ? (
                         <div className="glass-panel p-6 rounded-2xl h-full">
                             <div className="flex items-center gap-3 mb-6">
-                                <BarChart3 size={20} className="text-indigo-600" />
-                                <h3 className="text-lg font-bold text-slate-700">Weekly Performance</h3>
+                                <BarChart3 size={20} className="text-indigo-400" />
+                                <h3 className="text-lg font-bold text-white">Weekly Performance</h3>
                             </div>
-                            <div className="flex items-end justify-between h-48 px-2">
-                                {weeklyData.map((d, i) => (
-                                    <div key={i} className="flex flex-col items-center gap-2 w-full">
-                                        <div className="w-full max-w-[40px] bg-indigo-100 rounded-t-lg relative group h-full flex items-end">
-                                            <div
-                                                className="w-full bg-indigo-500 rounded-t-lg transition-all duration-500"
-                                                style={{ height: `${Math.min(100, d.completed_count * 10)}%` }} // Scaling factor
+                            <div className="h-64 w-full">
+                                {weeklyData.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={weeklyData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
+                                            <XAxis dataKey="day_name" stroke="#94a3b8" tick={{ fill: '#cbd5e1', fontSize: 12 }} axisLine={false} tickLine={false} />
+                                            <YAxis stroke="#94a3b8" tick={{ fill: '#cbd5e1', fontSize: 12 }} axisLine={false} tickLine={false} />
+                                            <Tooltip
+                                                cursor={{ fill: '#ffffff05' }}
+                                                contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', color: '#fff' }}
                                             />
-                                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                                {d.completed_count} tasks
-                                            </div>
-                                        </div>
-                                        <span className="text-xs font-semibold text-slate-500">{d.day_name}</span>
+                                            <Bar dataKey="completed_count" radius={[4, 4, 0, 0]}>
+                                                {weeklyData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill="#6366f1" />
+                                                ))}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-slate-400">
+                                        <p>No data recorded for this week.</p>
                                     </div>
-                                ))}
-                                {weeklyData.length === 0 && <p className="text-slate-400 text-sm m-auto">No data for this week</p>}
+                                )}
                             </div>
                         </div>
                     ) : (
