@@ -69,7 +69,7 @@ const Chatbot = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleOpen}
-                className="fixed bottom-6 right-6 p-4 rounded-full bg-gradient-to-r from-teal-500 to-indigo-600 text-white shadow-lg shadow-teal-500/30 z-50 flex items-center justify-center border border-white/10"
+                className="fixed bottom-24 md:bottom-6 right-6 p-4 rounded-full bg-gradient-to-r from-teal-500 to-indigo-600 text-white shadow-lg shadow-teal-500/30 z-50 flex items-center justify-center border border-white/10"
             >
                 {isOpen ? <X size={24} /> : <Bot size={28} />}
             </motion.button>
@@ -81,7 +81,7 @@ const Chatbot = () => {
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                        className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-100px)] bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden"
+                        className="fixed bottom-[7rem] md:bottom-24 right-0 md:right-6 w-full md:w-96 md:max-w-[calc(100vw-3rem)] h-[calc(100vh-12rem)] md:h-[500px] md:max-h-[calc(100vh-100px)] bg-slate-900/95 md:bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden"
                     >
                         {/* Header */}
                         <div className="p-4 bg-white/5 border-b border-white/10 flex items-center gap-3">
@@ -106,8 +106,8 @@ const Chatbot = () => {
                                 >
                                     <div
                                         className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                                                ? 'bg-teal-600 text-white rounded-br-none'
-                                                : 'bg-white/10 text-slate-200 rounded-bl-none border border-white/5'
+                                            ? 'bg-teal-600 text-white rounded-br-none'
+                                            : 'bg-white/10 text-slate-200 rounded-bl-none border border-white/5'
                                             }`}
                                     >
                                         <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />

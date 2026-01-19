@@ -106,27 +106,108 @@ router.post('/ask', authenticateToken, async (req, res) => {
 
         let responseContent = "";
 
+        // Calculate detailed stats
+        const totalHabits = habits.length;
+        const totalLogs = logs.length;
+        const totalCompleted = logs.filter(l => l.completed).length;
+
+        // Calculate stats per habit
+        const habitStats = habits.map(habit => {
+            const habitLogs = logs.filter(l => l.habit_id === habit.id);
+            const completions = habitLogs.filter(l => l.completed).length;
+            return {
+                title: habit.title,
+                completions,
+                // Simple streak calculation (consecutive days looking back from today)
+                // Note: This is a basic estimation based on available logs
+                isActive: completions > 0
+            };
+        });
+
+        // Sort by completions to find best/worst
+        habitStats.sort((a, b) => b.completions - a.completions);
+        const bestHabit = habitStats[0];
+        const activeHabits = habitStats.filter(h => h.completions > 0);
+        const worstHabit = activeHabits.length > 0 ? activeHabits[activeHabits.length - 1] : null;
+
+
+
         // Simple Intent Recognition
         if (lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('hey')) {
-            responseContent = "Hello! I'm here to help you stay on track. Ask me for a **summary**, **motivation**, or about a specific habit.";
+            responseContent = `Hello! I'm here to analyze your performance. Ask me for a **performance report**, **summary**, or about a specific habit like "**${habits[0]?.title || 'Reading'}**".`;
 
-        } else if (lowerMsg.includes('summary') || lowerMsg.includes('how am i doing') || lowerMsg.includes('stats')) {
-            const totalLogs = logs.length;
-            const completed = logs.filter(l => l.completed).length;
-            const rate = totalLogs > 0 ? Math.round((completed / totalLogs) * 100) : 0;
-            responseContent = `In the last 30 days, you've tracked **${totalLogs}** times with a **${rate}%** completion rate across all habits. Keep pushing!`;
+        } else if (lowerMsg.includes('performance') || lowerMsg.includes('analysis') || lowerMsg.includes('report')) {
+            if (totalHabits === 0) {
+                responseContent = "You haven't set up any habits yet. Go to the Dashboard to create one!";
+            } else {
+                responseContent = `📊 **Performance Report (Last 30 Days)**<br/><br/>`;
+
+                if (bestHabit && bestHabit.completions > 0) {
+                    responseContent += `🏆 **Top Habit**: **${bestHabit.title}** is your strongest habit with **${bestHabit.completions}** completions.<br/>`;
+                }
+
+                if (worstHabit && worstHabit !== bestHabit) {
+                    responseContent += `⚠️ **Needs Focus**: **${worstHabit.title}** is lagging behind with **${worstHabit.completions}** completions.<br/>`;
+                }
+
+                const unusedHabits = habitStats.filter(h => h.completions === 0);
+                if (unusedHabits.length > 0) {
+                    responseContent += `💤 **Inactive**: You haven't logged **${unusedHabits[0].title}** ${unusedHabits.length > 1 ? `and ${unusedHabits.length - 1} others` : ''} recently.<br/>`;
+                }
+
+                responseContent += `<br/>Overall, you're maintaining **${activeHabits.length}** active habits. Keep it up!`;
+            }
+
+        } else if (lowerMsg.includes('summary') || lowerMsg.includes('how am i doing') || lowerMsg.includes('stats') || lowerMsg.includes('progress')) {
+            const avgCompletions = totalHabits > 0 ? (totalCompleted / totalHabits).toFixed(1) : 0;
+
+            responseContent = `📝 **Monthly Summary**<br/>`;
+            responseContent += `You've tracked a total of **${totalLogs}** activities in the last 30 days.<br/><br/>`;
+            responseContent += `• **Total Completions**: ${totalCompleted}<br/>`;
+            responseContent += `• **Avg per Habit**: ${avgCompletions}<br/>`;
+
+            if (totalCompleted > 20) {
+                responseContent += `<br/>🔥 You are on a roll! Your consistency is impressive.`;
+            } else if (totalCompleted > 0) {
+                responseContent += `<br/>🌱 You're building momentum. Great start!`;
+            } else {
+                responseContent += `<br/>Let's get started today! log your first habit.`;
+            }
 
         } else if (lowerMsg.includes('motivation') || lowerMsg.includes('inspire')) {
             const quotes = [
                 "Success is the sum of small efforts, repeated day in and day out.",
                 "The secret of your future is hidden in your daily routine.",
                 "Don't watch the clock; do what it does. Keep going.",
-                "You don't have to be great to start, but you have to start to be great."
+                "You don't have to be great to start, but you have to start to be great.",
+                "Small habits, when performed consistently, lead to massive results."
             ];
             responseContent = quotes[Math.floor(Math.random() * quotes.length)];
 
+        } else if (lowerMsg.includes('what is habiti') || lowerMsg.includes('about this app') || lowerMsg.includes('who are you')) {
+            responseContent = "I'm **Habiti AI**, your personal growth companion. My goal is to help you build better habits, track your progress, and stay consistent on your journey to a better you.";
+
+        } else if (lowerMsg.includes('how to create') || lowerMsg.includes('add habit') || lowerMsg.includes('new habit')) {
+            responseContent = "To create a new habit, go to your **Dashboard** and look for the card with the **'+'** icon. meaningful title, choose a color, and you're set!";
+
+        } else if (lowerMsg.includes('how to delete') || lowerMsg.includes('remove habit')) {
+            responseContent = "You can manage your habits in the **Dashboard**. Look for the settings or edit option on the specific habit card you wish to remove.";
+
+        } else if (lowerMsg.includes('why') && lowerMsg.includes('habit')) {
+            responseContent = "Habits are the compound interest of self-improvement. Building good habits allows you to reach your goals on autopilot, freeing up mental energy for deeper work.";
+
+        } else if (lowerMsg.includes('tip') || lowerMsg.includes('advice') || lowerMsg.includes('start')) {
+            const tips = [
+                "**Start Small**: Don't try to change everything at once. Pick one tiny habit and master it.",
+                "**Two-Minute Rule**: If a new habit takes less than two minutes to do, do it right now.",
+                "**Habit Stacking**: Attach your new habit to a current one. 'After I pour my coffee, I will meditate for 1 minute.'",
+                "**Never Miss Twice**: If you miss a day, that's okay. Just don't miss two days in a row."
+            ];
+            responseContent = tips[Math.floor(Math.random() * tips.length)];
+
         } else if (lowerMsg.includes('help')) {
-            responseContent = "I can give you a **summary** of your progress, provide **motivation**, or tell you stats about specific habits (e.g., ask 'How is my Reading habit?').";
+            responseContent = "I can analyze your data or answer basic questions. Try asking:<br/>• **How is my performance?**<br/>• **How to add a habit?**<br/>• **Give me a tip**<br/>• **What is Habiti?**";
+
 
         } else {
             // Check for specific habit names in user input
@@ -137,10 +218,20 @@ router.post('/ask', authenticateToken, async (req, res) => {
                 const completedLast30 = habitLogs.filter(l => l.completed).length;
                 const completedLast7 = habitLogs.filter(l => l.completed && new Date(l.log_date) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length;
 
-                responseContent = `Creating the **${foundHabit.title}** habit looks good! You've done it **${completedLast30}** times in the last month (${completedLast7} times this week).`;
+                responseContent = `🔍 **${foundHabit.title} Analysis**<br/>`;
+                responseContent += `• Last 30 Days: **${completedLast30}** times<br/>`;
+                responseContent += `• Last 7 Days: **${completedLast7}** times<br/><br/>`;
+
+                if (completedLast7 >= 5) {
+                    responseContent += "You're crushing this habit! 🌟";
+                } else if (completedLast7 >= 1) {
+                    responseContent += "Good consistency. Try to increase frequency next week! 📈";
+                } else {
+                    responseContent += "Let's try to get back on track with this one. You got this! 💪";
+                }
             } else {
                 // Fallback
-                responseContent = "I didn't quite catch that. Try asking for a **summary** or mention a specific habit by name.";
+                responseContent = "I'm not sure which habit you mean. Try asking for a **performance report** or mention a specific habit name.";
             }
         }
 

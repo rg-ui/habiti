@@ -56,38 +56,38 @@ export default function JournalPage() {
     ];
 
     return (
-        <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-8 p-4">
+        <div className="max-w-7xl mx-auto min-h-[calc(100vh-6rem)] md:h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-6 md:gap-8 p-4 md:p-6 pb-24 md:pb-4">
 
             {/* Left: Writing Area */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="flex-[2] flex flex-col bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-10 relative overflow-hidden shadow-2xl shadow-black/40 group"
+                className="flex-[2] flex flex-col bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-10 relative overflow-hidden shadow-2xl shadow-black/40 group min-h-[60vh] md:min-h-0"
             >
                 {/* Ambient Glows */}
-                <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-teal-500/30 transition-colors duration-700" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-indigo-500/30 transition-colors duration-700" />
+                <div className="absolute top-[-20%] left-[-10%] w-64 md:w-96 h-64 md:h-96 bg-teal-500/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none group-hover:bg-teal-500/30 transition-colors duration-700" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-64 md:w-96 h-64 md:h-96 bg-indigo-500/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none group-hover:bg-indigo-500/30 transition-colors duration-700" />
 
-                <header className="flex justify-between items-start mb-8 relative z-10">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0 mb-6 md:mb-8 relative z-10">
                     <div>
-                        <h1 className="text-4xl font-bold text-white tracking-tight flex items-center gap-4 mb-2">
+                        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-4 mb-1 md:mb-2">
                             Daily Reflection
                         </h1>
-                        <p className="text-teal-200/60 font-medium text-lg tracking-wide">{format(new Date(), 'EEEE, MMMM do, yyyy')}</p>
+                        <p className="text-teal-200/60 font-medium text-base md:text-lg tracking-wide">{format(new Date(), 'EEEE, MMMM do, yyyy')}</p>
                     </div>
 
-                    <div className="bg-black/20 backdrop-blur-md p-1.5 rounded-2xl flex gap-1 border border-white/5">
+                    <div className="w-full md:w-auto bg-black/20 backdrop-blur-md p-1.5 rounded-2xl flex justify-between md:justify-start gap-1 border border-white/5">
                         {moodOptions.map((option) => (
                             <button
                                 key={option.value}
                                 onClick={() => setMood(option.value)}
-                                className={`p-3 rounded-xl transition-all duration-300 relative group/icon ${mood === option.value
-                                        ? 'bg-gradient-to-br from-teal-500/20 to-teal-900/40 text-teal-300 shadow-inner'
-                                        : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                className={`flex-1 md:flex-none p-2.5 md:p-3 rounded-xl transition-all duration-300 relative group/icon flex justify-center items-center ${mood === option.value
+                                    ? 'bg-gradient-to-br from-teal-500/20 to-teal-900/40 text-teal-300 shadow-inner'
+                                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                     }`}
                             >
-                                <option.icon size={28} strokeWidth={mood === option.value ? 2.5 : 1.5} className="relative z-10" />
+                                <option.icon size={24} strokeWidth={mood === option.value ? 2.5 : 1.5} className="relative z-10 md:w-7 md:h-7" />
                                 {mood === option.value && (
                                     <motion.div
                                         layoutId="activeMood"
@@ -99,17 +99,17 @@ export default function JournalPage() {
                     </div>
                 </header>
 
-                <div className="flex-1 relative z-10 group/textarea">
+                <div className="flex-1 relative z-10 group/textarea min-h-[30vh] md:min-h-0">
                     <textarea
-                        className="w-full h-full bg-transparent border-none resize-none focus:ring-0 outline-none text-xl md:text-2xl text-slate-200 font-serif leading-relaxed placeholder:text-slate-600/50 selection:bg-teal-500/30"
+                        className="w-full h-full bg-transparent border-none resize-none focus:ring-0 outline-none text-lg md:text-2xl text-slate-200 font-serif leading-relaxed placeholder:text-slate-600/50 selection:bg-teal-500/30 p-0"
                         placeholder="Clear your mind. What's on your thoughts today?"
                         value={content}
                         onChange={e => setContent(e.target.value)}
                     ></textarea>
                 </div>
 
-                <div className="flex justify-between items-center mt-6 relative z-10 pt-6 border-t border-white/5">
-                    <span className="text-slate-500 text-sm font-medium">
+                <div className="flex flex-col-reverse md:flex-row justify-between items-center mt-6 relative z-10 pt-6 border-t border-white/5 gap-4 md:gap-0">
+                    <span className="text-slate-500 text-xs md:text-sm font-medium w-full md:w-auto text-center md:text-left">
                         {content.length > 0 ? `${content.split(/\s+/).filter(w => w.length > 0).length} words` : 'Start writing...'}
                     </span>
 
@@ -117,7 +117,7 @@ export default function JournalPage() {
                         onClick={handleSave}
                         disabled={isSaving}
                         className={`
-                            px-8 py-3.5 rounded-xl font-bold text-white flex items-center gap-3 transition-all duration-300 shadow-lg border border-white/10
+                            w-full md:w-auto px-8 py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-3 transition-all duration-300 shadow-lg border border-white/10
                             ${isSaving
                                 ? 'bg-emerald-500/80 shadow-emerald-500/20 cursor-wait'
                                 : 'bg-gradient-to-r from-teal-500 to-indigo-600 hover:scale-[1.02] hover:shadow-teal-500/30 active:scale-95'
@@ -135,11 +135,12 @@ export default function JournalPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex-1 max-w-md flex flex-col gap-6"
+                className="flex-none md:flex-1 w-full md:max-w-md flex flex-col gap-4 md:gap-6"
             >
                 <div className="flex items-center justify-between px-2">
-                    <h2 className="text-2xl font-bold text-white tracking-tight">Recent Entries</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Recent Entries</h2>
                     <div className="p-2 bg-white/5 rounded-lg border border-white/5 text-slate-400">
+
                         <Calendar size={18} />
                     </div>
                 </div>
@@ -169,7 +170,7 @@ export default function JournalPage() {
                                                 </div>
                                             </div>
                                             <div className={`p-2 rounded-xl bg-white/5 ${entry.mood === 'happy' ? 'text-emerald-400' :
-                                                    entry.mood === 'sad' ? 'text-rose-400' : 'text-amber-400'
+                                                entry.mood === 'sad' ? 'text-rose-400' : 'text-amber-400'
                                                 }`}>
                                                 <MoodIcon size={18} />
                                             </div>

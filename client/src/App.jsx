@@ -34,8 +34,8 @@ const ProtectedLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-slate-950">
-      {/* Dark Glass Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-20 md:w-24 lg:w-72 bg-slate-900/40 backdrop-blur-xl border-r border-white/5 flex flex-col z-50 transition-all duration-500 shadow-2xl shadow-black/40">
+      {/* Desktop Sidebar (Hidden on Mobile) */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-24 lg:w-72 bg-slate-900/40 backdrop-blur-xl border-r border-white/5 flex-col z-50 transition-all duration-500 shadow-2xl shadow-black/40">
         <div className="p-8 flex items-center justify-center lg:justify-start gap-3">
           <img src={logo} alt="Habiti" className="w-10 h-10 object-contain drop-shadow-md" />
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-slate-400 hidden lg:block tracking-tight font-sans">habiti</span>
@@ -80,8 +80,27 @@ const ProtectedLayout = () => {
         </div>
       </aside>
 
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-slate-900/80 backdrop-blur-xl border-t border-white/5 z-50 px-6 flex justify-between items-center pb-2">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${isActive ? 'text-teal-400' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              <div className={`p-1.5 rounded-full transition-all ${isActive ? 'bg-teal-400/10 translate-y-[-4px]' : ''}`}>
+                <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+              </div>
+              <span className="text-[10px] font-medium tracking-wide">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
       {/* Main Content Area */}
-      <main className="flex-1 ml-20 md:ml-24 lg:ml-72 p-8 lg:p-12 overflow-y-auto w-full max-w-[1600px] mx-auto min-h-screen">
+      <main className="flex-1 md:ml-24 lg:ml-72 p-4 md:p-8 lg:p-12 pb-24 md:pb-8 overflow-y-auto w-full max-w-[1600px] mx-auto min-h-screen">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -95,7 +114,9 @@ const ProtectedLayout = () => {
         </AnimatePresence>
       </main>
 
-      <Chatbot />
+      <div className="hidden md:block">
+        <Chatbot />
+      </div>
     </div>
   );
 };
