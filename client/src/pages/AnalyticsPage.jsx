@@ -52,24 +52,41 @@ export default function AnalyticsPage() {
     const mostActive = data.length > 0 ? data.reduce((prev, current) => (parseInt(prev.completion_count) > parseInt(current.completion_count)) ? prev : current) : null;
 
     const ProFeatureLock = ({ title, description, icon: Icon }) => (
-        <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-6 opacity-80 backdrop-blur-sm">
-            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center text-center p-6">
-                <div className="bg-teal-500/10 p-3 rounded-full mb-3 text-teal-400">
-                    <Lock size={24} />
-                </div>
-                <h3 className="font-bold text-white text-lg">Unlock {title}</h3>
-                <p className="text-slate-400 text-sm mb-4 max-w-xs">{description}</p>
-                <Link to="/subscription" className="px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 hover:scale-105 active:scale-95 text-slate-950 font-bold rounded-lg text-sm transition-all shadow-lg shadow-teal-500/20">
-                    Upgrade to Pro
+        <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f4c47] to-[#052e2b] p-8 text-center shadow-2xl border border-teal-500/20 group"
+        >
+            {/* Animated Glow Background behind icon */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-teal-400/20 blur-[50px] rounded-full pointer-events-none animate-pulse"></div>
+
+            <div className="relative z-10 flex flex-col items-center">
+                {/* Icon Container */}
+                <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 shadow-lg shadow-teal-500/30 text-white"
+                >
+                    <Icon size={32} strokeWidth={2.5} />
+                </motion.div>
+
+                {/* Text Content */}
+                <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">{title}</h3>
+                <p className="text-teal-100/70 text-sm font-medium mb-6 max-w-xs leading-relaxed">
+                    {description}
+                </p>
+
+                {/* Action Button */}
+                <Link
+                    to="/subscription"
+                    className="px-6 py-3 bg-white text-teal-900 text-sm font-bold rounded-xl shadow-xl hover:shadow-white/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                >
+                    Unlock Premium
                 </Link>
             </div>
-            {/* Background elements to look 'busy' */}
-            <div className="flex items-center gap-2 mb-4 opacity-30 blur-sm">
-                <Icon size={24} className="text-slate-500" />
-                <span className="font-bold text-slate-500">Hidden Data</span>
-            </div>
-            <div className="h-32 bg-slate-800/30 rounded-xl blur-sm"></div>
-        </div>
+
+            {/* Decorative Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none"></div>
+        </motion.div>
     );
 
     return (
