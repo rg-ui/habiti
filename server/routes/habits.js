@@ -6,6 +6,25 @@ const authenticateToken = require('../middleware/auth');
 // Constants
 const FREE_HABIT_LIMIT = 5;
 
+// IMPORTANT: Static routes MUST come before dynamic :id routes!
+
+// Get logs for all habits (must be before /:id)
+router.get('/logs', authenticateToken, async (req, res) => {
+    try {
+        const logs = await pool.query(
+            `SELECT hl.* FROM habit_logs hl
+             JOIN habits h ON hl.habit_id = h.id
+             WHERE h.user_id = $1
+             ORDER BY hl.log_date DESC`,
+            [req.user.id]
+        );
+        res.json(logs.rows);
+    } catch (err) {
+        console.error('Error fetching logs:', err);
+        res.status(500).json({ error: 'Failed to fetch habit logs' });
+    }
+});
+
 // Get all habits for user
 router.get('/', authenticateToken, async (req, res) => {
     try {
@@ -20,7 +39,7 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
-// Get a single habit
+// Get a single habit (after /logs to prevent 'logs' being treated as ID)
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
@@ -144,23 +163,6 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     } catch (err) {
         console.error('Error deleting habit:', err);
         res.status(500).json({ error: 'Failed to delete habit' });
-    }
-});
-
-// Get logs for all habits
-router.get('/logs', authenticateToken, async (req, res) => {
-    try {
-        const logs = await pool.query(
-            `SELECT hl.* FROM habit_logs hl
-             JOIN habits h ON hl.habit_id = h.id
-             WHERE h.user_id = $1
-             ORDER BY hl.log_date DESC`,
-            [req.user.id]
-        );
-        res.json(logs.rows);
-    } catch (err) {
-        console.error('Error fetching logs:', err);
-        res.status(500).json({ error: 'Failed to fetch habit logs' });
     }
 });
 

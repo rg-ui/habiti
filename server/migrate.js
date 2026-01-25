@@ -1,55 +1,51 @@
-const { Pool } = require('pg');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-});
+const pool = require('./db');
 
 async function migrate() {
     try {
-        console.log("Starting migration...");
+        console.log('Running migrations...\n');
 
-        // Add is_pro to users
-        await pool.query(`
-            DO $$
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='is_pro') THEN
-                    ALTER TABLE users ADD COLUMN is_pro BOOLEAN DEFAULT FALSE;
-                END IF;
-            END
-            $$;
+        // Add identity_goal column if it doesn't exist
+        const result = await pool.query(`
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'habits' AND column_name = 'identity_goal'
         `);
-        console.log("Added is_pro to users.");
 
-        // Add identity_goal to habits
-        await pool.query(`
-            DO $$
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='habits' AND column_name='identity_goal') THEN
-                    ALTER TABLE habits ADD COLUMN identity_goal VARCHAR(100);
-                END IF;
-            END
-            $$;
-        `);
-        console.log("Added identity_goal to habits.");
+        if (result.rows.length === 0) {
+            console.log('Adding identity_goal column to habits table...');
+            await pool.query(`
+                ALTER TABLE habits 
+                ADD COLUMN identity_goal VARCHAR(200)
+            `);
+            console.log('✓ Added identity_goal column');
+        } else {
+            console.log('✓ identity_goal column already exists');
+        }
 
-        // Add is_admin to users
-        await pool.query(`
-            DO $$
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='is_admin') THEN
-                    ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;
-                END IF;
-            END
-            $$;
-        `);
-        console.log("Added is_admin to users.");
+        // Create indexes if they don't exist
+        console.log('\nCreating indexes...');
 
-        console.log("Migration complete.");
+        const indexes = [
+            { name: 'idx_habits_user_id', query: 'CREATE INDEX IF NOT EXISTS idx_habits_user_id ON habits(user_id)' },
+            { name: 'idx_habit_logs_habit_id', query: 'CREATE INDEX IF NOT EXISTS idx_habit_logs_habit_id ON habit_logs(habit_id)' },
+            { name: 'idx_habit_logs_log_date', query: 'CREATE INDEX IF NOT EXISTS idx_habit_logs_log_date ON habit_logs(log_date)' },
+            { name: 'idx_journal_entries_user_id', query: 'CREATE INDEX IF NOT EXISTS idx_journal_entries_user_id ON journal_entries(user_id)' },
+            { name: 'idx_journal_entries_date', query: 'CREATE INDEX IF NOT EXISTS idx_journal_entries_date ON journal_entries(entry_date)' },
+        ];
+
+        for (const idx of indexes) {
+            try {
+                await pool.query(idx.query);
+                console.log(`✓ Index ${idx.name} ready`);
+            } catch (err) {
+                console.log(`  Index ${idx.name} may already exist`);
+            }
+        }
+
+        console.log('\n✅ All migrations completed successfully!');
         process.exit(0);
     } catch (err) {
-        console.error("Migration failed:", err);
+        console.error('❌ Migration failed:', err.message);
         process.exit(1);
     }
 }
