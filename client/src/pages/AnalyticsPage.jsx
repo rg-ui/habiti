@@ -107,7 +107,7 @@ export default function AnalyticsPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl p-6 text-white shadow-xl shadow-teal-500/20 relative overflow-hidden"
+                    className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl p-4 md:p-6 text-white shadow-xl shadow-teal-500/20 relative overflow-hidden"
                 >
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <TrendingUp size={100} />
