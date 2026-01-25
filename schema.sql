@@ -1,4 +1,5 @@
 -- Database Schema for Habit Tracker
+-- Run this file to set up the PostgreSQL database
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS habits (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(100) NOT NULL,
     description TEXT,
+    identity_goal VARCHAR(200), -- e.g., "Become a Runner"
     color VARCHAR(20) DEFAULT '#3B82F6', -- Default blue
     goal_frequency VARCHAR(20) DEFAULT 'daily', -- daily, weekly
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -37,3 +39,10 @@ CREATE TABLE IF NOT EXISTS journal_entries (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, entry_date)
 );
+
+-- Indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_habits_user_id ON habits(user_id);
+CREATE INDEX IF NOT EXISTS idx_habit_logs_habit_id ON habit_logs(habit_id);
+CREATE INDEX IF NOT EXISTS idx_habit_logs_log_date ON habit_logs(log_date);
+CREATE INDEX IF NOT EXISTS idx_journal_entries_user_id ON journal_entries(user_id);
+CREATE INDEX IF NOT EXISTS idx_journal_entries_date ON journal_entries(entry_date);

@@ -2,25 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import AnalyticsChart from '../components/AnalyticsChart';
-import { TrendingUp, Award, Calendar, Lock, Brain, BarChart3 } from 'lucide-react';
+import { TrendingUp, Award, Calendar, Lock, Brain, BarChart3, Flame, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
 export default function AnalyticsPage() {
     const [data, setData] = useState([]);
     const [weeklyData, setWeeklyData] = useState([]);
-    // Mock data for visualization if real data is empty (remove or adjust logic as needed)
-    // const [weeklyData, setWeeklyData] = useState([
-    //     { day_name: 'Mon', completed_count: 4 },
-    //     { day_name: 'Tue', completed_count: 6 },
-    //     { day_name: 'Wed', completed_count: 3 },
-    //     { day_name: 'Thu', completed_count: 8 },
-    //     { day_name: 'Fri', completed_count: 5 },
-    //     { day_name: 'Sat', completed_count: 2 },
-    //     { day_name: 'Sun', completed_count: 7 },
-    // ]);
     const [correlations, setCorrelations] = useState([]);
     const [user, setUser] = useState({ is_pro: false });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -30,37 +21,48 @@ export default function AnalyticsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
                 const res = await api.get('/analytics/progress');
                 setData(res.data);
 
                 if (user.is_pro) {
-                    const weeklyRes = await api.get('/analytics/weekly');
-                    setWeeklyData(weeklyRes.data);
+                    try {
+                        const weeklyRes = await api.get('/analytics/weekly');
+                        setWeeklyData(weeklyRes.data);
+                    } catch (err) {
+                        console.log('Weekly data not available');
+                    }
 
-                    const corrRes = await api.get('/analytics/correlations');
-                    setCorrelations(corrRes.data);
+                    try {
+                        const corrRes = await api.get('/analytics/correlations');
+                        setCorrelations(corrRes.data);
+                    } catch (err) {
+                        console.log('Correlations not available');
+                    }
                 }
             } catch (err) {
                 console.error(err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
     }, [user.is_pro]);
 
     // Calculate total completions
-    const totalCompletions = data.reduce((acc, curr) => acc + parseInt(curr.completion_count), 0);
+    const totalCompletions = data.reduce((acc, curr) => acc + parseInt(curr.completion_count || 0), 0);
     const mostActive = data.length > 0 ? data.reduce((prev, current) => (parseInt(prev.completion_count) > parseInt(current.completion_count)) ? prev : current) : null;
+    const avgPerHabit = data.length > 0 ? (totalCompletions / data.length).toFixed(1) : 0;
 
     const ProFeatureLock = ({ title, description, icon: Icon }) => (
         <motion.div
             whileHover={{ scale: 1.02 }}
-            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f4c47] to-[#052e2b] p-8 text-center shadow-2xl border border-teal-500/20 group"
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 p-8 text-center shadow-2xl border border-teal-500/20 group"
         >
-            {/* Animated Glow Background behind icon */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-teal-400/20 blur-[50px] rounded-full pointer-events-none animate-pulse"></div>
+            {/* Animated Glow Background */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-teal-400/20 blur-[50px] rounded-full pointer-events-none animate-pulse" />
 
             <div className="relative z-10 flex flex-col items-center">
-                {/* Icon Container */}
                 <motion.div
                     animate={{ y: [0, -5, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -69,31 +71,35 @@ export default function AnalyticsPage() {
                     <Icon size={32} strokeWidth={2.5} />
                 </motion.div>
 
-                {/* Text Content */}
                 <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">{title}</h3>
-                <p className="text-teal-100/70 text-sm font-medium mb-6 max-w-xs leading-relaxed">
+                <p className="text-slate-400 text-sm font-medium mb-6 max-w-xs leading-relaxed">
                     {description}
                 </p>
 
-                {/* Action Button */}
                 <Link
                     to="/subscription"
-                    className="px-6 py-3 bg-white text-teal-900 text-sm font-bold rounded-xl shadow-xl hover:shadow-white/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                    className="px-6 py-3 bg-gradient-to-r from-teal-400 to-teal-500 text-slate-900 text-sm font-bold rounded-xl shadow-xl hover:shadow-teal-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
                 >
                     Unlock Premium
                 </Link>
             </div>
-
-            {/* Decorative Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none"></div>
         </motion.div>
     );
 
+    if (loading) {
+        return (
+            <div className="max-w-6xl mx-auto py-20 flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-slate-400">Loading analytics...</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-6xl mx-auto pb-10">
+        <div className="max-w-6xl mx-auto pb-20">
             <header className="mb-8">
                 <h1 className="text-3xl font-bold text-white">Progress Analytics</h1>
-                <p className="text-slate-300 mt-1">Visualize your consistency and growth.</p>
+                <p className="text-slate-400 mt-1">Visualize your consistency and growth.</p>
             </header>
 
             {/* Basic Stats Row */}
@@ -128,7 +134,7 @@ export default function AnalyticsPage() {
                         <p className="text-2xl font-bold text-white line-clamp-1">
                             {mostActive ? mostActive.title : 'N/A'}
                         </p>
-                        <p className="text-slate-300 font-medium mt-1">
+                        <p className="text-slate-400 font-medium mt-1">
                             {mostActive ? `${mostActive.completion_count} days completed` : 'Start tracking to see this'}
                         </p>
                     </div>
@@ -140,16 +146,16 @@ export default function AnalyticsPage() {
                     transition={{ delay: 0.2 }}
                     className="glass-card p-6 rounded-2xl"
                 >
-                    <div className="flex items-center gap-3 mb-4 text-teal-400">
-                        <Calendar size={24} />
-                        <span className="font-bold">Current Streak</span>
+                    <div className="flex items-center gap-3 mb-4 text-amber-400">
+                        <Target size={24} />
+                        <span className="font-bold">Average Per Habit</span>
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-white">
-                            {mostActive ? Math.min(mostActive.completion_count, 7) : 0} Days
+                            {avgPerHabit} completions
                         </p>
-                        <p className="text-slate-300 font-medium mt-1">
-                            Keep the momentum going!
+                        <p className="text-slate-400 font-medium mt-1">
+                            Across {data.length} habits
                         </p>
                     </div>
                 </motion.div>
@@ -164,7 +170,14 @@ export default function AnalyticsPage() {
                     className="glass-panel p-6 rounded-2xl"
                 >
                     <h3 className="text-lg font-bold text-white mb-6 px-2">Completion Overview</h3>
-                    <AnalyticsChart data={data} />
+                    {data.length > 0 ? (
+                        <AnalyticsChart data={data} />
+                    ) : (
+                        <div className="h-64 flex flex-col items-center justify-center text-slate-500">
+                            <BarChart3 size={48} className="mb-4 opacity-50" />
+                            <p>No habit data yet. Create a habit to start tracking!</p>
+                        </div>
+                    )}
                 </motion.div>
 
                 {/* Weekly Report (Pro) */}
@@ -224,24 +237,24 @@ export default function AnalyticsPage() {
                 {user.is_pro ? (
                     <div className="glass-panel p-6 rounded-2xl">
                         <div className="flex items-center gap-3 mb-6">
-                            <Brain size={20} className="text-purple-600" />
-                            <h3 className="text-lg font-bold text-slate-700">Mood x Productivity</h3>
+                            <Brain size={20} className="text-purple-400" />
+                            <h3 className="text-lg font-bold text-white">Mood × Productivity</h3>
                         </div>
                         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {correlations.map((c, i) => (
-                                <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between">
-                                    <div>
-                                        <span className="text-2xl mr-2">{
-                                            c.mood === 'Happy' ? '😄' :
-                                                c.mood === 'Sad' ? '😔' :
-                                                    c.mood === 'Energetic' ? '⚡' :
-                                                        c.mood === 'Relaxed' ? '😌' : '😐'
+                                <div key={i} className="bg-slate-900/50 p-4 rounded-xl border border-white/5 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-2xl">{
+                                            c.mood === 'happy' ? '😄' :
+                                                c.mood === 'sad' ? '😔' :
+                                                    c.mood === 'energetic' ? '⚡' :
+                                                        c.mood === 'relaxed' ? '😌' : '😐'
                                         }</span>
-                                        <span className="font-semibold text-slate-700 capitalize">{c.mood}</span>
+                                        <span className="font-semibold text-white capitalize">{c.mood}</span>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl font-bold text-slate-800">{c.avg_completion}</div>
-                                        <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Avg Habits</div>
+                                        <div className="text-xl font-bold text-white">{c.avg_completion}</div>
+                                        <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Avg Habits</div>
                                     </div>
                                 </div>
                             ))}

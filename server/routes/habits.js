@@ -3,6 +3,9 @@ const router = express.Router();
 const pool = require('../db');
 const authenticateToken = require('../middleware/auth');
 
+// Constants
+const FREE_HABIT_LIMIT = 5;
+
 // Get all habits for user
 router.get('/', authenticateToken, async (req, res) => {
     try {
@@ -10,47 +13,77 @@ router.get('/', authenticateToken, async (req, res) => {
             'SELECT * FROM habits WHERE user_id = $1 ORDER BY created_at ASC',
             [req.user.id]
         );
-        // Fetch logs for these habits (last 30 days usually?) or all? 
-        // For simplicity, let's fetch logs separately or join.
-        // Let's just return habits here.
         res.json(habits.rows);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error fetching habits:', err);
+        res.status(500).json({ error: 'Failed to fetch habits' });
+    }
+});
+
+// Get a single habit
+router.get('/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query(
+            'SELECT * FROM habits WHERE id = $1 AND user_id = $2',
+            [id, req.user.id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Habit not found' });
+        }
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error fetching habit:', err);
+        res.status(500).json({ error: 'Failed to fetch habit' });
     }
 });
 
 // Create habit
 router.post('/', authenticateToken, async (req, res) => {
-    console.log("POST /habits request received");
-    console.log("User:", req.user);
-    console.log("Body:", req.body);
-
     try {
         const { title, description, color, goal_frequency, identity_goal } = req.body;
 
+        // Validation
+        if (!title || title.trim().length === 0) {
+            return res.status(400).json({ error: 'Habit title is required' });
+        }
+
+        if (title.length > 100) {
+            return res.status(400).json({ error: 'Habit title is too long (max 100 characters)' });
+        }
+
         // Check habit limit for non-pro users
         if (!req.user.is_pro) {
-            console.log("Checking limit for non-pro user");
             const countResult = await pool.query('SELECT COUNT(*) FROM habits WHERE user_id = $1', [req.user.id]);
             const count = parseInt(countResult.rows[0].count);
-            console.log("Current habit count:", count);
 
-            if (count >= 5) {
-                console.log("Limit reached");
-                return res.status(403).json({ error: 'Free plan limit reached (5 habits). Upgrade to Premium for unlimited habits.' });
+            if (count >= FREE_HABIT_LIMIT) {
+                return res.status(403).json({
+                    error: `Free plan limit reached (${FREE_HABIT_LIMIT} habits). Upgrade to Premium for unlimited habits.`,
+                    limit_reached: true
+                });
             }
         }
 
         const newHabit = await pool.query(
-            'INSERT INTO habits (user_id, title, description, color, goal_frequency, identity_goal) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [req.user.id, title, description, color, goal_frequency, identity_goal]
+            `INSERT INTO habits (user_id, title, description, color, goal_frequency, identity_goal) 
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [
+                req.user.id,
+                title.trim(),
+                description?.trim() || null,
+                color || '#14b8a6',
+                goal_frequency || 'daily',
+                identity_goal?.trim() || null
+            ]
         );
-        console.log("Habit created successfully:", newHabit.rows[0]);
-        res.json(newHabit.rows[0]);
+
+        res.status(201).json(newHabit.rows[0]);
     } catch (err) {
-        console.error("Error creating habit:", err);
-        res.status(500).json({ error: 'Server error: ' + err.message });
+        console.error('Error creating habit:', err);
+        res.status(500).json({ error: 'Failed to create habit' });
     }
 });
 
@@ -58,20 +91,38 @@ router.post('/', authenticateToken, async (req, res) => {
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, color, goal_frequency } = req.body;
+        const { title, description, color, goal_frequency, identity_goal } = req.body;
+
+        // Validation
+        if (!title || title.trim().length === 0) {
+            return res.status(400).json({ error: 'Habit title is required' });
+        }
 
         // Ensure user owns habit
         const check = await pool.query('SELECT * FROM habits WHERE id = $1 AND user_id = $2', [id, req.user.id]);
-        if (check.rows.length === 0) return res.status(404).json({ error: 'Habit not found' });
+        if (check.rows.length === 0) {
+            return res.status(404).json({ error: 'Habit not found' });
+        }
 
         const updated = await pool.query(
-            'UPDATE habits SET title = $1, description = $2, color = $3, goal_frequency = $4 WHERE id = $5 RETURNING *',
-            [title, description, color, goal_frequency, id]
+            `UPDATE habits 
+             SET title = $1, description = $2, color = $3, goal_frequency = $4, identity_goal = $5 
+             WHERE id = $6 
+             RETURNING *`,
+            [
+                title.trim(),
+                description?.trim() || null,
+                color || '#14b8a6',
+                goal_frequency || 'daily',
+                identity_goal?.trim() || null,
+                id
+            ]
         );
+
         res.json(updated.rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error updating habit:', err);
+        res.status(500).json({ error: 'Failed to update habit' });
     }
 });
 
@@ -79,30 +130,37 @@ router.put('/:id', authenticateToken, async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await pool.query('DELETE FROM habits WHERE id = $1 AND user_id = $2 RETURNING *', [id, req.user.id]);
-        if (result.rows.length === 0) return res.status(404).json({ error: 'Habit not found' });
-        res.json({ message: 'Habit deleted' });
+
+        // First check if habit exists and belongs to user
+        const check = await pool.query('SELECT * FROM habits WHERE id = $1 AND user_id = $2', [id, req.user.id]);
+        if (check.rows.length === 0) {
+            return res.status(404).json({ error: 'Habit not found' });
+        }
+
+        // Delete the habit (cascade will handle logs)
+        await pool.query('DELETE FROM habits WHERE id = $1 AND user_id = $2', [id, req.user.id]);
+
+        res.json({ message: 'Habit deleted successfully', deleted_habit: check.rows[0] });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error deleting habit:', err);
+        res.status(500).json({ error: 'Failed to delete habit' });
     }
 });
 
-// Get logs for all habits (or specific)
-// Easier to fetch all logs for the current user to display dashboard
+// Get logs for all habits
 router.get('/logs', authenticateToken, async (req, res) => {
     try {
-        // Return logs for habits belonging to user
         const logs = await pool.query(
             `SELECT hl.* FROM habit_logs hl
              JOIN habits h ON hl.habit_id = h.id
-             WHERE h.user_id = $1`,
+             WHERE h.user_id = $1
+             ORDER BY hl.log_date DESC`,
             [req.user.id]
         );
         res.json(logs.rows);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error fetching logs:', err);
+        res.status(500).json({ error: 'Failed to fetch habit logs' });
     }
 });
 
@@ -110,19 +168,25 @@ router.get('/logs', authenticateToken, async (req, res) => {
 router.post('/:id/check', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { date, completed } = req.body; // date string YYYY-MM-DD
+        const { date, completed } = req.body;
+
+        // Validate date
+        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD' });
+        }
 
         // Ownership check
         const check = await pool.query('SELECT * FROM habits WHERE id = $1 AND user_id = $2', [id, req.user.id]);
-        if (check.rows.length === 0) return res.status(404).json({ error: 'Habit not found' });
+        if (check.rows.length === 0) {
+            return res.status(404).json({ error: 'Habit not found' });
+        }
 
         if (completed === false) {
-            // Remove log
+            // Remove log (uncheck)
             await pool.query('DELETE FROM habit_logs WHERE habit_id = $1 AND log_date = $2', [id, date]);
-            res.json({ message: 'Unchecked', completed: false });
+            res.json({ message: 'Habit unchecked', completed: false, date });
         } else {
-            // Upsert log
-            // Postgres UPSERT
+            // Upsert log (check)
             await pool.query(
                 `INSERT INTO habit_logs (habit_id, log_date, completed) 
                  VALUES ($1, $2, TRUE)
@@ -130,11 +194,51 @@ router.post('/:id/check', authenticateToken, async (req, res) => {
                  DO UPDATE SET completed = TRUE`,
                 [id, date]
             );
-            res.json({ message: 'Checked', completed: true });
+            res.json({ message: 'Habit checked', completed: true, date });
         }
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error toggling habit:', err);
+        res.status(500).json({ error: 'Failed to update habit status' });
+    }
+});
+
+// Get streak information for a habit
+router.get('/:id/streak', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Ownership check
+        const check = await pool.query('SELECT * FROM habits WHERE id = $1 AND user_id = $2', [id, req.user.id]);
+        if (check.rows.length === 0) {
+            return res.status(404).json({ error: 'Habit not found' });
+        }
+
+        // Get consecutive days from today going backward
+        const streakResult = await pool.query(`
+            WITH dates AS (
+                SELECT log_date FROM habit_logs 
+                WHERE habit_id = $1 AND completed = true
+                ORDER BY log_date DESC
+            )
+            SELECT COUNT(*) as streak FROM (
+                SELECT log_date, ROW_NUMBER() OVER (ORDER BY log_date DESC) as rn
+                FROM dates
+            ) sub
+            WHERE log_date = CURRENT_DATE - (rn - 1)::integer
+        `, [id]);
+
+        const totalResult = await pool.query(
+            'SELECT COUNT(*) as total FROM habit_logs WHERE habit_id = $1 AND completed = true',
+            [id]
+        );
+
+        res.json({
+            current_streak: parseInt(streakResult.rows[0]?.streak || 0),
+            total_completions: parseInt(totalResult.rows[0]?.total || 0)
+        });
+    } catch (err) {
+        console.error('Error getting streak:', err);
+        res.status(500).json({ error: 'Failed to get streak data' });
     }
 });
 
