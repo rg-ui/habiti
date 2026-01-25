@@ -5,24 +5,22 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS Configuration - Allow both specific origins and development
+// CORS Configuration
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
     'http://127.0.0.1:5173',
-    process.env.CORS_ORIGIN, // Your Vercel frontend URL
-].filter(Boolean); // Remove undefined values
+    process.env.CORS_ORIGIN,
+].filter(Boolean);
 
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (mobile apps, curl, Postman)
         if (!origin) return callback(null, true);
-
         if (allowedOrigins.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) {
             callback(null, true);
         } else {
             console.warn('CORS blocked origin:', origin);
-            callback(null, true); // Allow all origins for now (change to false in strict production)
+            callback(null, true);
         }
     },
     credentials: true,
@@ -33,22 +31,20 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
-
-// Trust proxy for production (Render, Heroku, etc.)
 app.set('trust proxy', 1);
 
-// Request logger (can be disabled in production)
+// Request logger
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
 
-// Health check endpoint (useful for monitoring)
+// Health check
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '2.0.0' });
 });
 
-// Routes
+// Core Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/habits', require('./routes/habits'));
 app.use('/journal', require('./routes/journal'));
@@ -56,11 +52,23 @@ app.use('/analytics', require('./routes/analytics'));
 app.use('/admin', require('./routes/admin'));
 app.use('/chat', require('./routes/chat'));
 
+// Premium Feature Routes
+app.use('/templates', require('./routes/templates'));
+app.use('/focus', require('./routes/focus'));
+app.use('/achievements', require('./routes/achievements'));
+
+// Root endpoint
 app.get('/', (req, res) => {
     res.json({
-        message: 'Habit Tracker API is running',
-        version: '1.0.0',
-        docs: 'See /health for status'
+        message: 'Habiti API v2.0',
+        features: [
+            'Habit Tracking',
+            'Focus Timer (Pomodoro)',
+            'Habit Templates',
+            'Achievements & Badges',
+            'Analytics',
+            'AI Coaching'
+        ]
     });
 });
 
@@ -79,6 +87,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🚀 Habiti API v2.0 running on port ${PORT}`);
     console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`✨ Features: Templates, Focus Timer, Achievements`);
 });
