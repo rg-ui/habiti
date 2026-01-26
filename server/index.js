@@ -6,30 +6,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // CORS Configuration
-const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:5173',
-    process.env.CORS_ORIGIN,
-].filter(Boolean);
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) {
-            callback(null, true);
-        } else {
-            console.warn('CORS blocked origin:', origin);
-            callback(null, true);
-        }
-    },
+// CORS Configuration
+app.use(cors({
+    origin: [
+        "https://habiti-app-seven.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000"
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-};
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware
-app.use(cors(corsOptions));
+
 app.use(express.json());
 app.set('trust proxy', 1);
 
