@@ -1,4 +1,4 @@
-# Habiti - Habit Tracker Sprint Clone
+# Habiti - PERSONALISED HABIT TRACKER
 
 A beautiful, full-stack habit-tracking application built with React and Express.js. Track your daily habits, journal your reflections, and visualize your progress with detailed analytics.
 
