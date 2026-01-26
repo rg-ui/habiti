@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 
 export default function SubscriptionPage() {
-    const [billingCycle, setBillingCycle] = useState('yearly');
+    // Monthly only - no yearly option
     const [user, setUser] = useState({ is_pro: false });
     const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
     const [showPromo, setShowPromo] = useState(true);
@@ -69,23 +69,23 @@ export default function SubscriptionPage() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="mb-6 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-amber-500/20 border border-red-500/30 rounded-2xl p-4 relative"
+                        className="mb-6 bg-gradient-to-r from-teal-500/20 via-emerald-500/20 to-green-500/20 border border-teal-500/30 rounded-2xl p-4 relative"
                     >
                         <button onClick={() => setShowPromo(false)} className="absolute top-3 right-3 text-white/50 hover:text-white">
                             <X size={18} />
                         </button>
                         <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
                             <div className="flex items-center gap-2">
-                                <Flame className="text-orange-400 animate-pulse" size={20} />
-                                <span className="text-sm md:text-base font-bold text-white">Limited Time Offer!</span>
+                                <Sparkles className="text-teal-400 animate-pulse" size={20} />
+                                <span className="text-sm md:text-base font-bold text-white">Special Launch Offer!</span>
                             </div>
                             <div className="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-xl">
-                                <Clock size={16} className="text-amber-400" />
+                                <Clock size={16} className="text-teal-400" />
                                 <span className="font-mono text-lg font-bold text-white">
                                     {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
                                 </span>
                             </div>
-                            <span className="text-amber-400 font-bold text-sm">Get 25% OFF Yearly!</span>
+                            <span className="text-teal-400 font-bold text-sm">Only ₹9/month!</span>
                         </div>
                     </motion.div>
                 )}
@@ -124,28 +124,13 @@ export default function SubscriptionPage() {
                 ))}
             </motion.div>
 
-            {/* Billing Toggle */}
+            {/* Simple Monthly Pricing */}
             <div className="flex justify-center mb-8">
-                <div className="bg-slate-900/80 p-1.5 rounded-2xl flex border border-white/10 w-full max-w-sm">
-                    <button
-                        onClick={() => setBillingCycle('monthly')}
-                        className={`flex-1 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${billingCycle === 'monthly'
-                            ? 'bg-white text-slate-900 shadow-lg'
-                            : 'text-slate-400 hover:text-white'
-                            }`}
-                    >
-                        Monthly
-                    </button>
-                    <button
-                        onClick={() => setBillingCycle('yearly')}
-                        className={`flex-1 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 relative ${billingCycle === 'yearly'
-                            ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 shadow-lg shadow-amber-500/30'
-                            : 'text-slate-400 hover:text-white'
-                            }`}
-                    >
-                        Yearly
-                        <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">-25%</span>
-                    </button>
+                <div className="bg-gradient-to-r from-teal-500/20 to-emerald-500/20 border border-teal-500/30 rounded-2xl px-6 py-3 flex items-center gap-3">
+                    <Zap size={20} className="text-teal-400" />
+                    <span className="text-white font-bold">Simple Pricing:</span>
+                    <span className="text-teal-400 font-bold text-lg">₹9/month</span>
+                    <span className="text-slate-400 text-sm">• Cancel anytime</span>
                 </div>
             </div>
 
@@ -214,20 +199,10 @@ export default function SubscriptionPage() {
 
                                 <p className="text-slate-300 text-sm mb-6">Everything you need to succeed.</p>
 
-                                <div className="flex items-baseline gap-2 mb-2">
-                                    {billingCycle === 'yearly' && (
-                                        <span className="text-lg text-slate-500 line-through">₹108</span>
-                                    )}
-                                    <span className="text-4xl md:text-5xl font-bold text-white">
-                                        {billingCycle === 'monthly' ? '₹9' : '₹89'}
-                                    </span>
-                                    <span className="text-slate-400 text-sm">
-                                        /{billingCycle === 'monthly' ? 'mo' : 'yr'}
-                                    </span>
+                                <div className="flex items-baseline gap-2 mb-6">
+                                    <span className="text-4xl md:text-5xl font-bold text-white">₹9</span>
+                                    <span className="text-slate-400 text-sm">/month</span>
                                 </div>
-                                {billingCycle === 'yearly' && (
-                                    <p className="text-emerald-400 text-sm mb-6 font-medium">You save ₹19 per year! 🎉</p>
-                                )}
 
                                 <ul className="space-y-3 mb-8">
                                     {proFeatures.map((feature, i) => (
