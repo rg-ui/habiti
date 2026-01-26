@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Lock, Check, ArrowRight, Sun, Dumbbell, Brain, Heart, Target, Zap, Crown } from 'lucide-react';
+import { Sparkles, Lock, Check, ArrowRight, Sun, Dumbbell, Brain, Heart, Target, Zap, Crown, GraduationCap, Rocket, Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 
@@ -10,6 +10,9 @@ const CATEGORY_ICONS = {
     'Productivity': Brain,
     'Mental Health': Heart,
     'Challenges': Target,
+    'Students': GraduationCap,
+    'Entrepreneurs': Rocket,
+    'Content Creators': Video,
     'default': Sparkles
 };
 
@@ -19,6 +22,9 @@ const CATEGORY_COLORS = {
     'Productivity': { bg: 'from-indigo-500/20 to-purple-500/20', border: 'border-indigo-500/30', text: 'text-indigo-400' },
     'Mental Health': { bg: 'from-pink-500/20 to-purple-500/20', border: 'border-pink-500/30', text: 'text-pink-400' },
     'Challenges': { bg: 'from-teal-500/20 to-emerald-500/20', border: 'border-teal-500/30', text: 'text-teal-400' },
+    'Students': { bg: 'from-blue-500/20 to-cyan-500/20', border: 'border-blue-500/30', text: 'text-blue-400' },
+    'Entrepreneurs': { bg: 'from-orange-500/20 to-yellow-500/20', border: 'border-orange-500/30', text: 'text-orange-400' },
+    'Content Creators': { bg: 'from-rose-500/20 to-pink-500/20', border: 'border-rose-500/30', text: 'text-rose-400' },
 };
 
 export default function TemplatesPage() {
@@ -223,8 +229,8 @@ export default function TemplatesPage() {
                                 onClick={() => applyTemplate(selectedTemplate)}
                                 disabled={applying}
                                 className={`w-full py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${selectedTemplate.locked
-                                        ? 'bg-amber-500 text-slate-900 hover:bg-amber-400'
-                                        : 'bg-teal-500 text-slate-900 hover:bg-teal-400'
+                                    ? 'bg-amber-500 text-slate-900 hover:bg-amber-400'
+                                    : 'bg-teal-500 text-slate-900 hover:bg-teal-400'
                                     }`}
                             >
                                 {applying ? (
