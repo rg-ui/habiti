@@ -56,6 +56,7 @@ app.use('/chat', require('./routes/chat'));
 app.use('/templates', require('./routes/templates'));
 app.use('/focus', require('./routes/focus'));
 app.use('/achievements', require('./routes/achievements'));
+app.use('/pro', require('./routes/pro'));
 
 // Root endpoint
 app.get('/', (req, res) => {

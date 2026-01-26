@@ -75,6 +75,30 @@ async function migrate() {
         `);
         console.log('✓ streak_freeze_logs table ready');
 
+        // 8b. Create user_freezes table for Pro streak freeze feature
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS user_freezes (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+                freezes_available INTEGER DEFAULT 0,
+                freezes_used_this_month INTEGER DEFAULT 0,
+                last_freeze_reset TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        console.log('✓ user_freezes table ready');
+
+        // 8c. Create streak_freeze_log table for tracking individual freeze uses
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS streak_freeze_log (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                freeze_date DATE NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id, freeze_date)
+            )
+        `);
+        console.log('✓ streak_freeze_log table ready');
+
         // 9. Create indexes
         const indexes = [
             { name: 'idx_habits_user_id', query: 'CREATE INDEX IF NOT EXISTS idx_habits_user_id ON habits(user_id)' },

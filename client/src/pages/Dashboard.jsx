@@ -31,6 +31,10 @@ export default function Dashboard() {
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [greeting, setGreeting] = useState('');
 
+    // Pro feature states
+    const [freezesAvailable, setFreezesAvailable] = useState(0);
+    const [aiInsight, setAiInsight] = useState(null);
+
     useEffect(() => {
         const hour = new Date().getHours();
         if (hour < 12) setGreeting('Good morning');
@@ -38,8 +42,38 @@ export default function Dashboard() {
         else setGreeting('Good evening');
 
         const storedUser = localStorage.getItem('user');
-        if (storedUser) setUser(JSON.parse(storedUser));
+        if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setUser(userData);
+            // Fetch Pro features if user is pro
+            if (userData.is_pro) {
+                fetchProFeatures();
+            }
+        }
     }, []);
+
+    const fetchProFeatures = async () => {
+        try {
+            const [freezeRes, insightRes] = await Promise.all([
+                api.get('/pro/freezes'),
+                api.get('/pro/insights/daily')
+            ]);
+            setFreezesAvailable(freezeRes.data.freezesAvailable);
+            setAiInsight(insightRes.data);
+        } catch (err) {
+            console.log('Pro features not available:', err);
+        }
+    };
+
+    const handleUseFreeze = async () => {
+        try {
+            const res = await api.post('/pro/freezes/use');
+            setFreezesAvailable(res.data.freezesAvailable);
+            alert('Streak freeze applied for today! Your streaks are protected.');
+        } catch (err) {
+            alert(err.response?.data?.error || 'Failed to use freeze');
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -245,7 +279,7 @@ export default function Dashboard() {
             {/* Pro Features Row */}
             <div className="grid md:grid-cols-2 gap-4 mb-8">
                 {/* Streak Freeze */}
-                <StreakFreezeCard isPro={user.is_pro} freezesLeft={user.is_pro ? 3 : 0} />
+                <StreakFreezeCard isPro={user.is_pro} freezesLeft={freezesAvailable} onUseFreeze={handleUseFreeze} />
 
                 {/* AI Daily Insight - Pro Only */}
                 {!user.is_pro ? (
@@ -279,14 +313,22 @@ export default function Dashboard() {
                                 <Brain size={20} className="text-purple-400" />
                             </div>
                             <span className="text-white font-bold text-sm">Today's AI Insight</span>
+                            {aiInsight?.stats && (
+                                <span className="text-xs text-purple-400 bg-purple-500/20 px-2 py-0.5 rounded-full">
+                                    {aiInsight.stats.completionRate}% done
+                                </span>
+                            )}
                         </div>
                         <p className="text-slate-300 text-sm leading-relaxed">
-                            {todayCompletions >= habits.length * 0.8
-                                ? "🔥 You're on fire! Your consistency is building strong neural pathways. Keep it up!"
-                                : todayCompletions >= habits.length * 0.5
-                                    ? "💪 Great progress! Try completing one more habit to boost your momentum."
-                                    : "🌅 Start with your easiest habit to build momentum for the day."
-                            }
+                            {aiInsight ? (
+                                <>
+                                    <span className="mr-1">{aiInsight.emoji}</span>
+                                    {aiInsight.insight}
+                                    <span className="block mt-1 text-purple-300 text-xs">{aiInsight.tip}</span>
+                                </>
+                            ) : (
+                                "Loading your personalized insight..."
+                            )}
                         </p>
                     </motion.div>
                 )}

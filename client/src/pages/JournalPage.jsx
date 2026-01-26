@@ -12,11 +12,49 @@ export default function JournalPage() {
     const [mood, setMood] = useState('neutral');
     const [isSaving, setIsSaving] = useState(false);
     const [user, setUser] = useState({ is_pro: false });
+    const [dailyPrompt, setDailyPrompt] = useState(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
-        if (storedUser) setUser(JSON.parse(storedUser));
+        if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setUser(userData);
+            if (userData.is_pro) {
+                fetchDailyPrompt();
+            }
+        }
     }, []);
+
+    const fetchDailyPrompt = async () => {
+        try {
+            const res = await api.get('/pro/prompts/daily');
+            setDailyPrompt(res.data.prompt);
+        } catch (err) {
+            console.log('Could not fetch daily prompt');
+        }
+    };
+
+    const handleExport = async () => {
+        setIsExporting(true);
+        try {
+            const res = await api.get('/pro/export');
+            const dataStr = JSON.stringify(res.data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `habiti-export-${format(new Date(), 'yyyy-MM-dd')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert(err.response?.data?.error || 'Failed to export data');
+        } finally {
+            setIsExporting(false);
+        }
+    };
 
     const fetchEntries = async () => {
         try {
@@ -170,12 +208,20 @@ export default function JournalPage() {
                         </Link>
                     ) : (
                         <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-4">
-                            <div className="flex items-center gap-3 mb-2">
-                                <Sparkles size={18} className="text-purple-400" />
-                                <span className="text-white font-bold text-sm">Today's Prompt</span>
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                    <Sparkles size={18} className="text-purple-400" />
+                                    <span className="text-white font-bold text-sm">Today's Prompt</span>
+                                </div>
+                                <button
+                                    onClick={() => setContent(prev => prev + (prev ? '\n\n' : '') + `Prompt: ${dailyPrompt}\n\n`)}
+                                    className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                                >
+                                    Use →
+                                </button>
                             </div>
                             <p className="text-slate-300 text-sm italic">
-                                "What small win from today deserves recognition?"
+                                "{dailyPrompt || 'Loading prompt...'}"
                             </p>
                         </div>
                     )}
@@ -191,9 +237,15 @@ export default function JournalPage() {
                                 </div>
                             </Link>
                         ) : (
-                            <button className="flex-1 bg-teal-500/10 border border-teal-500/20 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-teal-500/20 transition-all">
+                            <button
+                                onClick={handleExport}
+                                disabled={isExporting}
+                                className="flex-1 bg-teal-500/10 border border-teal-500/20 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-teal-500/20 transition-all disabled:opacity-50"
+                            >
                                 <Download size={16} className="text-teal-400" />
-                                <span className="text-teal-400 text-xs font-medium">Export</span>
+                                <span className="text-teal-400 text-xs font-medium">
+                                    {isExporting ? 'Exporting...' : 'Export'}
+                                </span>
                             </button>
                         )}
                         {!user.is_pro ? (
