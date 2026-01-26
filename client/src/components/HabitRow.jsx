@@ -1,76 +1,86 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, MoreHorizontal, Edit3, Trash2, X, Flame } from 'lucide-react';
+import { Check, MoreHorizontal, Edit3, Trash2, Flame } from 'lucide-react';
 import { format, subDays, isSameDay } from 'date-fns';
 
 export default function HabitRow({ habit, onToggle, onEdit, onDelete }) {
     const [showMenu, setShowMenu] = useState(false);
 
-    // Generate days - 9 on mobile, 14 on desktop
+    // Generate days - 7 on mobile, 14 on desktop
     const isMobile = window.innerWidth < 768;
-    const dayCount = isMobile ? 9 : 14;
+    const dayCount = isMobile ? 7 : 14;
     const days = Array.from({ length: dayCount }).map((_, i) => subDays(new Date(), dayCount - 1 - i));
 
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            className="p-4 md:p-6 bg-slate-900/40 border border-white/5 rounded-2xl md:rounded-3xl active:bg-slate-900/60 md:hover:bg-slate-900/60 transition-colors group"
+            exit={{ opacity: 0, scale: 0.98 }}
+            className="p-4 md:p-5 bg-zinc-900/50 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-all group"
         >
-            {/* Main Content - Clickable area on mobile */}
-            <div className="flex items-center gap-3 md:gap-4 mb-4">
-                {/* Habit Icon */}
+            {/* Main Content */}
+            <div className="flex items-center gap-3 mb-4">
+                {/* Habit Color Indicator - Clean geometric square */}
                 <div
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-xl shadow-lg border border-white/5 flex-shrink-0"
-                    style={{ backgroundColor: `${habit.color}20`, color: habit.color }}
+                    className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-semibold flex-shrink-0 border"
+                    style={{
+                        backgroundColor: `${habit.color}15`,
+                        borderColor: `${habit.color}30`,
+                        color: habit.color
+                    }}
                 >
                     {habit.emoji || habit.title.charAt(0).toUpperCase()}
                 </div>
 
                 {/* Habit Info */}
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-slate-200 text-base md:text-lg leading-tight truncate">{habit.title}</h3>
-                    <p className="text-slate-500 text-[10px] md:text-xs font-bold uppercase tracking-wider truncate">{habit.identity_goal || 'Daily Goal'}</p>
+                    <h3 className="font-semibold text-zinc-200 text-sm md:text-base leading-tight truncate">
+                        {habit.title}
+                    </h3>
+                    <p className="text-zinc-600 text-xs truncate">
+                        {habit.identity_goal || 'Daily habit'}
+                    </p>
                 </div>
 
-                {/* Streak Badge - Always visible */}
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full border border-amber-500/20 flex-shrink-0">
-                    <Flame size={14} className="text-amber-400" />
-                    <span className="text-sm font-bold text-amber-400">{habit.streak || 0}</span>
-                </div>
+                {/* Streak - Minimal */}
+                {habit.streak > 0 && (
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-zinc-800/50 flex-shrink-0">
+                        <Flame size={12} className="text-amber-500" />
+                        <span className="text-xs font-semibold text-zinc-400">{habit.streak}</span>
+                    </div>
+                )}
 
-                {/* Desktop Menu */}
-                <div className="relative hidden md:block">
+                {/* Menu Button */}
+                <div className="relative">
                     <button
                         onClick={() => setShowMenu(!showMenu)}
-                        className="p-2 text-slate-600 hover:text-white hover:bg-white/5 rounded-xl transition-colors tap-target"
+                        className="p-2 text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800 rounded-lg transition-all opacity-0 group-hover:opacity-100 md:opacity-100"
                     >
-                        <MoreHorizontal size={20} />
+                        <MoreHorizontal size={18} />
                     </button>
 
                     {showMenu && (
                         <>
                             <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95, y: -5 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                className="absolute right-0 top-full mt-2 bg-slate-900 border border-white/10 rounded-xl shadow-2xl shadow-black/50 z-50 min-w-[160px] py-2"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="absolute right-0 top-full mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-50 min-w-[140px] py-1 overflow-hidden"
                             >
                                 <button
                                     onClick={() => { setShowMenu(false); onEdit(habit); }}
-                                    className="flex items-center gap-3 w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+                                    className="flex items-center gap-2 w-full px-3 py-2 text-left text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
                                 >
-                                    <Edit3 size={16} />
-                                    Edit Habit
+                                    <Edit3 size={14} />
+                                    Edit
                                 </button>
                                 <button
                                     onClick={() => { setShowMenu(false); onDelete && onDelete(habit); }}
-                                    className="flex items-center gap-3 w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+                                    className="flex items-center gap-2 w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                                 >
-                                    <Trash2 size={16} />
-                                    Delete Habit
+                                    <Trash2 size={14} />
+                                    Delete
                                 </button>
                             </motion.div>
                         </>
@@ -78,69 +88,52 @@ export default function HabitRow({ habit, onToggle, onEdit, onDelete }) {
                 </div>
             </div>
 
-            {/* Heatmap Grid */}
-            <div className="flex items-center gap-1 md:gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-                {days.map((day, i) => {
+            {/* Heatmap Grid - Clean geometric circles */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                {days.map((day) => {
                     const dateStr = format(day, 'yyyy-MM-dd');
                     const isCompleted = habit.completedDates?.includes(dateStr);
                     const isToday = isSameDay(day, new Date());
 
                     return (
-                        <div key={dateStr} className="flex flex-col items-center gap-1 md:gap-2 flex-shrink-0">
-                            <span className="text-[9px] md:text-[10px] font-medium text-slate-600 uppercase">
+                        <div key={dateStr} className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                            <span className="text-[10px] font-medium text-zinc-600">
                                 {format(day, 'EE').charAt(0)}
                             </span>
                             <button
                                 onClick={() => isToday && onToggle(habit.id)}
                                 disabled={!isToday}
                                 className={`
-                                    w-8 h-10 md:w-10 md:h-14 rounded-lg md:rounded-xl flex items-center justify-center transition-all duration-300 relative overflow-hidden
+                                    w-8 h-8 md:w-9 md:h-9 rounded-lg flex items-center justify-center transition-all duration-200 border
                                     ${isCompleted
-                                        ? 'shadow-[0_0_15px_-3px_var(--shadow-color)] scale-100'
-                                        : 'bg-slate-800/50 border border-white/5'
+                                        ? 'border-transparent'
+                                        : 'bg-zinc-900 border-zinc-800'
                                     }
-                                    ${isToday && !isCompleted ? 'ring-2 ring-teal-500/50 ring-offset-2 ring-offset-slate-950' : ''}
-                                    ${!isToday ? 'cursor-default opacity-80' : 'cursor-pointer active:scale-95'}
+                                    ${isToday && !isCompleted ? 'border-teal-500/50 bg-teal-500/5' : ''}
+                                    ${!isToday ? 'cursor-default' : 'cursor-pointer hover:border-zinc-600'}
                                 `}
                                 style={{
                                     backgroundColor: isCompleted ? habit.color : undefined,
-                                    '--shadow-color': habit.color
                                 }}
                             >
                                 {isCompleted && (
                                     <motion.div
-                                        initial={{ scale: 0.5 }}
+                                        initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        className="text-white"
                                     >
-                                        <Check size={14} className="md:w-[18px] md:h-[18px]" strokeWidth={3} />
+                                        <Check size={14} className="text-white" strokeWidth={2.5} />
                                     </motion.div>
                                 )}
+                                {isToday && !isCompleted && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                                )}
                             </button>
+                            <span className="text-[9px] text-zinc-700">
+                                {format(day, 'd')}
+                            </span>
                         </div>
                     );
                 })}
-            </div>
-
-            {/* Mobile Actions Row */}
-            <div className="flex md:hidden items-center justify-between pt-3 mt-3 border-t border-white/5">
-                <span className="text-[10px] text-slate-500 uppercase font-bold">
-                    {habit.streak > 0 ? `${habit.streak} day streak 🔥` : 'Start your streak!'}
-                </span>
-                <div className="flex items-center gap-1">
-                    <button
-                        onClick={() => onEdit(habit)}
-                        className="p-2.5 text-slate-400 active:text-white active:bg-white/10 rounded-lg transition-colors tap-target"
-                    >
-                        <Edit3 size={18} />
-                    </button>
-                    <button
-                        onClick={() => onDelete && onDelete(habit)}
-                        className="p-2.5 text-red-400 active:text-red-300 active:bg-red-500/10 rounded-lg transition-colors tap-target"
-                    >
-                        <Trash2 size={18} />
-                    </button>
-                </div>
             </div>
         </motion.div>
     );

@@ -50,85 +50,78 @@ const ProtectedLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-slate-950">
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-24 lg:w-72 bg-slate-900/40 backdrop-blur-xl border-r border-white/5 flex-col z-50 transition-all duration-500 shadow-2xl shadow-black/40">
-        <div className="p-8 flex items-center justify-center lg:justify-start gap-3">
-          <img src={logo} alt="Habiti" className="w-10 h-10 object-contain drop-shadow-md" />
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-slate-400 hidden lg:block tracking-tight font-sans">habiti</span>
+    <div className="min-h-screen flex bg-zinc-950">
+      {/* Desktop Sidebar - Minimalist */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-20 lg:w-64 bg-zinc-950 border-r border-zinc-900 flex-col z-50">
+        <div className="p-6 flex items-center justify-center lg:justify-start gap-3 border-b border-zinc-900">
+          <img src={logo} alt="Habiti" className="w-8 h-8 object-contain" />
+          <span className="text-xl font-semibold text-zinc-100 hidden lg:block tracking-tight">habiti</span>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2 flex flex-col items-center lg:items-stretch overflow-y-auto">
+        <nav className="flex-1 px-3 py-6 space-y-1 flex flex-col items-center lg:items-stretch overflow-y-auto">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group ${isActive
-                  ? 'text-teal-400 bg-white/5 shadow-md shadow-black/20 border border-white/5 scale-[1.02]'
-                  : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
+                  ? 'text-teal-400 bg-teal-500/10'
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
                   }`}
               >
-                <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-teal-400/10 text-teal-400' : 'bg-transparent group-hover:bg-white/5'}`}>
-                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                <div className={`p-1.5 rounded-md ${isActive ? '' : ''}`}>
+                  <item.icon size={18} strokeWidth={isActive ? 2 : 1.5} />
                 </div>
-                <span className="hidden lg:block font-medium text-sm tracking-wide">{item.label}</span>
+                <span className="hidden lg:block text-sm font-medium">{item.label}</span>
 
                 {isActive && (
                   <motion.div
-                    layoutId="activeIndicator"
-                    className="absolute left-0 w-1 h-8 bg-teal-400 rounded-r-full lg:hidden"
+                    layoutId="activeNav"
+                    className="absolute left-0 w-0.5 h-5 bg-teal-500 rounded-r-full"
                   />
-                )}
-
-                {item.path === '/achievements' && (
-                  <span className="hidden lg:inline-flex ml-auto px-2 py-0.5 bg-amber-500/20 rounded-full text-[10px] font-bold text-amber-400">
-                    NEW
-                  </span>
                 )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-6 border-t border-white/5">
+        <div className="p-4 border-t border-zinc-900">
           <button onClick={() => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';
-          }} className="flex items-center gap-4 w-full px-4 py-3 rounded-2xl text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 group justify-center lg:justify-start">
-            <LogOut size={20} className="group-hover:scale-110 transition-transform" />
-            <span className="hidden lg:block font-medium text-sm">Sign Out</span>
+          }} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-zinc-600 hover:bg-zinc-900 hover:text-red-400 transition-all duration-200 justify-center lg:justify-start">
+            <LogOut size={18} />
+            <span className="hidden lg:block text-sm font-medium">Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-950/90 backdrop-blur-xl border-b border-white/5 z-50 px-4 flex items-center justify-between safe-area-top">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Habiti" className="w-8 h-8 object-contain" />
-          <span className="text-lg font-bold text-white">habiti</span>
+      {/* Mobile Header - Minimalist */}
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-zinc-950 border-b border-zinc-900 z-50 px-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="Habiti" className="w-7 h-7 object-contain" />
+          <span className="text-base font-semibold text-zinc-100">habiti</span>
         </div>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 text-slate-400 hover:text-white transition-colors"
+          className="p-2 text-zinc-500 hover:text-zinc-300 transition-colors"
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </header>
 
-      {/* Mobile Full Menu */}
+      {/* Mobile Full Menu - Minimalist */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25 }}
-            className="md:hidden fixed inset-0 bg-slate-950 z-40 pt-20 px-6 pb-24 overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="md:hidden fixed inset-0 bg-zinc-950 z-40 pt-16 px-4 pb-20 overflow-y-auto"
           >
-            <div className="space-y-4">
+            <div className="space-y-1 py-4">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
@@ -136,33 +129,28 @@ const ProtectedLayout = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${isActive
-                        ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20'
-                        : 'text-slate-400 hover:bg-white/5'
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
+                      ? 'bg-teal-500/10 text-teal-400'
+                      : 'text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300'
                       }`}
                   >
-                    <item.icon size={24} />
-                    <span className="font-medium text-lg">{item.label}</span>
-                    {item.path === '/achievements' && (
-                      <span className="ml-auto px-2 py-1 bg-amber-500/20 rounded-full text-xs font-bold text-amber-400">
-                        NEW
-                      </span>
-                    )}
+                    <item.icon size={20} strokeWidth={1.5} />
+                    <span className="font-medium">{item.label}</span>
                   </Link>
                 );
               })}
 
-              <div className="pt-4 border-t border-white/5">
+              <div className="pt-4 mt-4 border-t border-zinc-900">
                 <button
                   onClick={() => {
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     window.location.href = '/login';
                   }}
-                  className="flex items-center gap-4 p-4 w-full text-red-400 hover:bg-red-500/10 rounded-2xl transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 w-full text-zinc-600 hover:bg-zinc-900 hover:text-red-400 rounded-lg transition-colors"
                 >
-                  <LogOut size={24} />
-                  <span className="font-medium text-lg">Sign Out</span>
+                  <LogOut size={20} />
+                  <span className="font-medium">Sign Out</span>
                 </button>
               </div>
             </div>
@@ -170,22 +158,17 @@ const ProtectedLayout = () => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-slate-950/95 backdrop-blur-xl border-t border-white/5 z-50 px-2 flex justify-around items-center safe-area-bottom">
+      {/* Mobile Bottom Navigation - Minimalist */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-zinc-950 border-t border-zinc-900 z-50 px-2 flex justify-around items-center">
         {mobileNavItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all min-w-[60px] ${isActive ? 'text-teal-400' : 'text-slate-500'}`}
+              className={`flex flex-col items-center gap-0.5 p-2 rounded-lg transition-all min-w-[56px] ${isActive ? 'text-teal-400' : 'text-zinc-600'}`}
             >
-              <motion.div
-                className={`p-2 rounded-xl transition-all ${isActive ? 'bg-teal-400/10' : ''}`}
-                animate={isActive ? { scale: 1.1, y: -4 } : { scale: 1, y: 0 }}
-              >
-                <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-              </motion.div>
+              <item.icon size={20} strokeWidth={isActive ? 2 : 1.5} />
               <span className="text-[10px] font-medium">{item.label}</span>
             </Link>
           );
@@ -193,14 +176,14 @@ const ProtectedLayout = () => {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-24 lg:ml-72 pt-20 md:pt-0 p-4 md:p-8 lg:p-12 pb-28 md:pb-8 overflow-y-auto w-full max-w-[1600px] mx-auto min-h-screen">
+      <main className="flex-1 md:ml-20 lg:ml-64 pt-16 md:pt-0 p-4 md:p-6 lg:p-8 pb-20 md:pb-8 overflow-y-auto w-full max-w-[1400px] mx-auto min-h-screen">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
           >
             <Outlet />
           </motion.div>

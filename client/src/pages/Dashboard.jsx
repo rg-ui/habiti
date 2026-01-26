@@ -167,51 +167,45 @@ export default function Dashboard() {
     const colorPresets = ['#14b8a6', '#6366f1', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#10b981', '#3b82f6'];
 
     return (
-        <div className="max-w-7xl mx-auto pb-20 relative">
-            {/* Background Orbs */}
-            <GradientOrb color="rgba(20, 184, 166, 0.3)" size="w-[600px] h-[600px]" position={{ top: '-200px', right: '-200px' }} />
-            <GradientOrb color="rgba(99, 102, 241, 0.2)" size="w-[400px] h-[400px]" position={{ bottom: '0', left: '-100px' }} delay={2} />
+        <div className="max-w-6xl mx-auto pb-20 relative">
+            {/* Geometric grid background */}
+            <div className="fixed inset-0 geo-grid pointer-events-none opacity-50" />
 
-            {/* Header */}
-            <header className="relative z-10 mb-12">
+            {/* Header - Minimalist */}
+            <header className="relative z-10 mb-10">
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6"
+                    className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6"
                 >
                     <div>
-                        <motion.p
-                            className="text-slate-400 text-lg mb-1"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            {greeting}, <span className="text-white font-semibold">{user.username}</span> 👋
-                        </motion.p>
-                        <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">
-                            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">Dashboard</span>
+                        <p className="text-zinc-500 text-sm font-medium mb-1">
+                            {greeting}, <span className="text-zinc-300">{user.username}</span>
+                        </p>
+                        <h1 className="text-3xl lg:text-4xl font-semibold text-zinc-100 tracking-tight">
+                            Dashboard
                         </h1>
                     </div>
 
                     {hasHitLimit ? (
                         <Link to="/subscription">
                             <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-bold rounded-2xl shadow-xl shadow-amber-500/20 flex items-center gap-2"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-5 py-2.5 bg-amber-500 text-zinc-950 font-semibold rounded-lg flex items-center gap-2 text-sm"
                             >
-                                <Crown size={20} />
-                                Upgrade for More
+                                <Crown size={16} />
+                                Upgrade
                             </motion.div>
                         </Link>
                     ) : (
                         <motion.button
                             onClick={openNewHabitModal}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-6 py-3 bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-bold rounded-2xl shadow-xl shadow-teal-500/20 flex items-center gap-2"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="px-5 py-2.5 bg-teal-500 text-zinc-950 font-semibold rounded-lg flex items-center gap-2 text-sm"
                         >
-                            <Plus size={20} />
+                            <Plus size={16} />
                             New Habit
                         </motion.button>
                     )}
