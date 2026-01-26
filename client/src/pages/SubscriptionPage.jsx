@@ -100,8 +100,8 @@ export default function SubscriptionPage() {
 
                     <button
                         className={`w-full py-3 md:py-4 rounded-2xl font-bold transition-all text-sm uppercase tracking-wide ${user.is_pro
-                                ? 'bg-white/5 text-slate-500 cursor-default border border-white/5'
-                                : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'
+                            ? 'bg-white/5 text-slate-500 cursor-default border border-white/5'
+                            : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'
                             }`}
                         disabled={!user.is_pro}
                     >
@@ -138,7 +138,7 @@ export default function SubscriptionPage() {
                         <p className="text-slate-400 text-sm mb-6 md:mb-8 font-medium relative z-10">Master your habits with deep insights.</p>
 
                         <div className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-white tracking-tight relative z-10">
-                            {billingCycle === 'monthly' ? '₹29' : '₹299'}
+                            {billingCycle === 'monthly' ? '₹9' : '₹89'}
                             <span className="text-base font-medium text-slate-500">
                                 / {billingCycle === 'monthly' ? 'month' : 'year'}
                             </span>
@@ -176,8 +176,8 @@ export default function SubscriptionPage() {
 
                         <button
                             className={`w-full mt-8 py-3 md:py-4 rounded-2xl font-bold transition-all shadow-xl relative z-10 uppercase text-sm tracking-wide ${user.is_pro
-                                    ? 'bg-emerald-500 text-white cursor-default shadow-emerald-500/20'
-                                    : 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 hover:scale-[1.02] active:scale-95 shadow-amber-500/20'
+                                ? 'bg-emerald-500 text-white cursor-default shadow-emerald-500/20'
+                                : 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 hover:scale-[1.02] active:scale-95 shadow-amber-500/20'
                                 }`}
                             disabled={user.is_pro}
                         >
