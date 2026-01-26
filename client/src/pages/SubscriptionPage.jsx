@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Star, Shield, Sparkles, Crown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Check, Star, Shield, Sparkles, Crown, Zap, TrendingUp, Clock, Users, Gift, Lock, ArrowRight, X, Heart, Flame } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 
 export default function SubscriptionPage() {
-    const [billingCycle, setBillingCycle] = useState('monthly');
+    const [billingCycle, setBillingCycle] = useState('yearly');
     const [user, setUser] = useState({ is_pro: false });
+    const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
+    const [showPromo, setShowPromo] = useState(true);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -14,48 +16,121 @@ export default function SubscriptionPage() {
         }
     }, []);
 
-    const features = [
-        "Unlimited Habits",
-        "Deep Analytics & Trends",
-        "Weekly Progress Reports",
-        "Mood & Context Correlations",
-        "Priority Support",
-        "Support Independent Development"
+    // Countdown timer for urgency
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+                if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+                if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+                return { hours: 23, minutes: 59, seconds: 59 };
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const proFeatures = [
+        { icon: Zap, text: "Unlimited Habits", highlight: true },
+        { icon: TrendingUp, text: "AI-Powered Analytics & Predictions" },
+        { icon: Sparkles, text: "Personalized Coaching Tips" },
+        { icon: Flame, text: "Advanced Streak Protection" },
+        { icon: Heart, text: "Mood & Energy Correlations" },
+        { icon: Clock, text: "Detailed Time Analytics" },
+        { icon: Gift, text: "Early Access to New Features" },
+        { icon: Star, text: "Priority 24/7 Support" }
     ];
 
     const freeFeatures = [
-        "Track up to 5 habits",
-        "Basic journaling",
-        "7-day history",
-        "Basic analytics"
+        { text: "Track up to 3 habits", locked: false },
+        { text: "7-day history only", locked: true },
+        { text: "Basic analytics", locked: true },
+        { text: "No streak protection", locked: true },
+        { text: "Limited journal entries", locked: true }
+    ];
+
+    const testimonials = [
+        { name: "Priya S.", avatar: "🧘‍♀️", text: "Pro changed my life! Lost 12kg in 3 months.", rating: 5 },
+        { name: "Rahul M.", avatar: "💪", text: "Best ₹9 I spend every month. Worth every paisa!", rating: 5 },
+        { name: "Ananya K.", avatar: "📚", text: "The analytics helped me study 3x more effectively.", rating: 5 }
+    ];
+
+    const stats = [
+        { value: "50K+", label: "Pro Members" },
+        { value: "94%", label: "Success Rate" },
+        { value: "4.9★", label: "App Rating" }
     ];
 
     return (
-        <div className="max-w-4xl mx-auto py-6 md:py-12 px-4 md:px-6 pb-24">
-            <div className="text-center mb-10 md:mb-16">
+        <div className="max-w-5xl mx-auto py-4 md:py-8 px-4 md:px-6 pb-28">
+            {/* Urgency Banner */}
+            <AnimatePresence>
+                {showPromo && !user.is_pro && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="mb-6 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-amber-500/20 border border-red-500/30 rounded-2xl p-4 relative"
+                    >
+                        <button onClick={() => setShowPromo(false)} className="absolute top-3 right-3 text-white/50 hover:text-white">
+                            <X size={18} />
+                        </button>
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
+                            <div className="flex items-center gap-2">
+                                <Flame className="text-orange-400 animate-pulse" size={20} />
+                                <span className="text-sm md:text-base font-bold text-white">Limited Time Offer!</span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-xl">
+                                <Clock size={16} className="text-amber-400" />
+                                <span className="font-mono text-lg font-bold text-white">
+                                    {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+                                </span>
+                            </div>
+                            <span className="text-amber-400 font-bold text-sm">Get 25% OFF Yearly!</span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Header */}
+            <div className="text-center mb-8 md:mb-12">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-full border border-amber-500/20 mb-6"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-full border border-amber-500/30 mb-4"
                 >
                     <Crown size={16} className="text-amber-400" />
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-widest">Level Up Your Life</span>
+                    <span className="text-xs font-bold text-amber-400 uppercase tracking-widest">Join 50,000+ Achievers</span>
                 </motion.div>
-                <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6 tracking-tight">
-                    Invest in your <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">Identity.</span>
+                <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                    Transform Your Life for <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400">₹9/month</span>
                 </h1>
                 <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-                    Habiti Pro gives you the insights and tools to build who you want to be, faster.
+                    That's less than a cup of chai. ☕ Invest in yourself today.
                 </p>
             </div>
 
+            {/* Social Proof Stats */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="grid grid-cols-3 gap-4 mb-8 md:mb-12"
+            >
+                {stats.map((stat, i) => (
+                    <div key={i} className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
+                        <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</div>
+                        <div className="text-xs text-slate-400 font-medium">{stat.label}</div>
+                    </div>
+                ))}
+            </motion.div>
+
             {/* Billing Toggle */}
-            <div className="flex justify-center mb-8 md:mb-12">
-                <div className="bg-slate-900/50 p-1.5 rounded-2xl flex border border-white/5 w-full max-w-sm md:w-auto">
+            <div className="flex justify-center mb-8">
+                <div className="bg-slate-900/80 p-1.5 rounded-2xl flex border border-white/10 w-full max-w-sm">
                     <button
                         onClick={() => setBillingCycle('monthly')}
-                        className={`flex-1 md:flex-none px-4 md:px-8 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${billingCycle === 'monthly'
-                            ? 'bg-teal-500 shadow-lg shadow-teal-500/20 text-slate-950'
+                        className={`flex-1 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${billingCycle === 'monthly'
+                            ? 'bg-white text-slate-900 shadow-lg'
                             : 'text-slate-400 hover:text-white'
                             }`}
                     >
@@ -63,135 +138,191 @@ export default function SubscriptionPage() {
                     </button>
                     <button
                         onClick={() => setBillingCycle('yearly')}
-                        className={`flex-1 md:flex-none px-4 md:px-8 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2 ${billingCycle === 'yearly'
-                            ? 'bg-teal-500 shadow-lg shadow-teal-500/20 text-slate-950'
+                        className={`flex-1 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 relative ${billingCycle === 'yearly'
+                            ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 shadow-lg shadow-amber-500/30'
                             : 'text-slate-400 hover:text-white'
                             }`}
                     >
-                        Yearly <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide whitespace-nowrap ${billingCycle === 'yearly' ? 'bg-slate-950/30 text-slate-950' : 'bg-emerald-500/20 text-emerald-400'}`}>Save 20%</span>
+                        Yearly
+                        <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">-25%</span>
                     </button>
                 </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
-                {/* Free Tier */}
+            {/* Pricing Cards */}
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+                {/* Free Tier - Dimmed */}
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="glass-card p-6 md:p-8 rounded-[2rem] relative md:top-8 order-2 md:order-1"
+                    transition={{ delay: 0.2 }}
+                    className="bg-slate-900/50 p-6 rounded-3xl border border-white/5 relative opacity-60 order-2 md:order-1"
                 >
-                    <h3 className="text-xl font-bold text-white mb-2">Basic</h3>
-                    <p className="text-slate-400 text-sm mb-6 md:mb-8 font-medium">Essential tracking for daily consistency.</p>
-                    <div className="text-3xl md:text-4xl font-bold text-white mb-6 md:mb-8 tracking-tight">
-                        ₹0 <span className="text-base font-medium text-slate-500">/ forever</span>
-                    </div>
-
-                    <ul className="space-y-4 mb-8 md:mb-10">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950/80 rounded-3xl pointer-events-none" />
+                    <h3 className="text-lg font-bold text-slate-400 mb-2">Free</h3>
+                    <p className="text-slate-500 text-sm mb-4">Limited features</p>
+                    <div className="text-2xl font-bold text-slate-400 mb-6">₹0</div>
+                    <ul className="space-y-3 mb-6">
                         {freeFeatures.map((feature, i) => (
-                            <li key={i} className="flex items-center gap-4 text-slate-300 text-sm font-medium">
-                                <div className="bg-white/5 p-1 rounded-full border border-white/10">
-                                    <Check size={14} className="text-slate-500" strokeWidth={3} />
-                                </div>
-                                {feature}
+                            <li key={i} className="flex items-center gap-3 text-slate-500 text-sm">
+                                {feature.locked ? (
+                                    <Lock size={14} className="text-slate-600" />
+                                ) : (
+                                    <Check size={14} className="text-slate-500" />
+                                )}
+                                <span className={feature.locked ? 'line-through' : ''}>{feature.text}</span>
                             </li>
                         ))}
                     </ul>
-
-                    <button
-                        className={`w-full py-3 md:py-4 rounded-2xl font-bold transition-all text-sm uppercase tracking-wide ${user.is_pro
-                            ? 'bg-white/5 text-slate-500 cursor-default border border-white/5'
-                            : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'
-                            }`}
-                        disabled={!user.is_pro}
-                    >
-                        {user.is_pro ? 'Basic Plan' : 'Current Plan'}
+                    <button disabled className="w-full py-3 rounded-xl bg-white/5 text-slate-500 font-bold text-sm cursor-not-allowed">
+                        {user.is_pro ? 'Downgrade' : 'Current Plan'}
                     </button>
+                    <p className="text-center text-xs text-slate-600 mt-3">You're missing out on 80% of features</p>
                 </motion.div>
 
-                {/* Pro Tier */}
+                {/* Pro Tier - Highlighted */}
                 <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="relative p-1 rounded-[2.5rem] bg-gradient-to-b from-amber-400 to-amber-600 shadow-2xl shadow-amber-500/20 order-1 md:order-2"
+                    initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="relative order-1 md:order-2"
                 >
-                    <div className="bg-slate-950 rounded-[2.3rem] p-6 md:p-8 h-full relative overflow-hidden">
-                        {/* Glow effect */}
-                        <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500 rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3" />
+                    {/* Popular Badge */}
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                        <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-amber-500/30 flex items-center gap-1">
+                            <Sparkles size={12} /> MOST POPULAR
+                        </span>
+                    </div>
 
-                        <div className="flex justify-between items-start mb-2 relative z-10">
-                            <h3 className="text-xl font-bold mb-2 flex items-center gap-2 text-white">
-                                Pro <Star size={18} className="fill-amber-400 text-amber-400" />
-                            </h3>
-                            {billingCycle === 'yearly' && (
-                                <span className="bg-amber-400 text-slate-900 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-300/50 shadow-lg shadow-amber-500/20 uppercase tracking-wider">
-                                    Best Value
-                                </span>
-                            )}
-                            {user.is_pro && (
-                                <span className="bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-                                    <Check size={12} /> Active
-                                </span>
-                            )}
-                        </div>
-                        <p className="text-slate-400 text-sm mb-6 md:mb-8 font-medium relative z-10">Master your habits with deep insights.</p>
+                    <div className="p-1 rounded-[2rem] bg-gradient-to-b from-amber-400 via-orange-500 to-red-500 shadow-2xl shadow-amber-500/30">
+                        <div className="bg-slate-950 rounded-[1.8rem] p-6 md:p-8 relative overflow-hidden">
+                            {/* Animated Glow */}
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500 rounded-full blur-[100px] opacity-30 animate-pulse" />
+                            <div className="absolute bottom-0 left-0 w-60 h-60 bg-orange-500 rounded-full blur-[80px] opacity-20" />
 
-                        <div className="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-white tracking-tight relative z-10">
-                            {billingCycle === 'monthly' ? '₹9' : '₹89'}
-                            <span className="text-base font-medium text-slate-500">
-                                / {billingCycle === 'monthly' ? 'month' : 'year'}
-                            </span>
-                        </div>
-
-                        <ul className="space-y-4 mb-8 md:mb-10 relative z-10">
-                            {features.map((feature, i) => (
-                                <li key={i} className="flex items-center gap-4 text-slate-200 text-sm font-medium">
-                                    <div className="p-1 bg-amber-400/20 rounded-full border border-amber-400/20 flex-shrink-0">
-                                        <Check size={14} className="text-amber-400" strokeWidth={3} />
-                                    </div>
-                                    <span className="truncate">{feature}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        {/* Payment Section */}
-                        {!user.is_pro && (
-                            <div className="mt-8 bg-white/5 p-6 rounded-3xl backdrop-blur-md border border-white/5 relative z-10">
-                                <h4 className="text-xs font-bold text-amber-400 mb-4 text-center uppercase tracking-widest">Scan to Pay</h4>
-                                <div className="bg-white p-4 rounded-2xl w-40 h-40 md:w-48 md:h-48 mx-auto mb-4 shadow-lg shrink-0">
-                                    <img src="/assets/payment-qr.jpg" alt="UPI QR Code" className="w-full h-full object-contain" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect fill="%23f0f0f0" width="200" height="200"/><text x="50%" y="50%" font-family="Arial" font-size="14" fill="%23999" text-anchor="middle" dy=".3em">QR Code</text></svg>';
-                                    }} />
+                            <div className="relative z-10">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                        Pro <Star size={18} className="fill-amber-400 text-amber-400" />
+                                    </h3>
+                                    {user.is_pro && (
+                                        <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                                            <Check size={12} /> Active
+                                        </span>
+                                    )}
                                 </div>
-                                <div className="text-center overflow-hidden">
-                                    <p className="text-[10px] text-slate-500 mb-2 uppercase tracking-wide font-bold">UPI ID</p>
-                                    <div className="flex items-center justify-center gap-2 bg-black/40 p-3 rounded-xl border border-white/5 transition-all hover:bg-black/60 cursor-pointer overflow-x-auto">
-                                        <code className="text-xs md:text-sm font-mono text-amber-400 tracking-wide select-all whitespace-nowrap">7439250914@kotak811</code>
-                                    </div>
+
+                                <p className="text-slate-300 text-sm mb-6">Everything you need to succeed.</p>
+
+                                <div className="flex items-baseline gap-2 mb-2">
+                                    {billingCycle === 'yearly' && (
+                                        <span className="text-lg text-slate-500 line-through">₹108</span>
+                                    )}
+                                    <span className="text-4xl md:text-5xl font-bold text-white">
+                                        {billingCycle === 'monthly' ? '₹9' : '₹89'}
+                                    </span>
+                                    <span className="text-slate-400 text-sm">
+                                        /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                                    </span>
                                 </div>
+                                {billingCycle === 'yearly' && (
+                                    <p className="text-emerald-400 text-sm mb-6 font-medium">You save ₹19 per year! 🎉</p>
+                                )}
+
+                                <ul className="space-y-3 mb-8">
+                                    {proFeatures.map((feature, i) => (
+                                        <motion.li
+                                            key={i}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.4 + i * 0.05 }}
+                                            className={`flex items-center gap-3 text-sm ${feature.highlight ? 'text-amber-300 font-semibold' : 'text-slate-200'}`}
+                                        >
+                                            <div className={`p-1.5 rounded-full ${feature.highlight ? 'bg-amber-400/30' : 'bg-amber-400/20'}`}>
+                                                <feature.icon size={14} className="text-amber-400" />
+                                            </div>
+                                            {feature.text}
+                                        </motion.li>
+                                    ))}
+                                </ul>
+
+                                {/* Payment Section */}
+                                {!user.is_pro && (
+                                    <div className="bg-gradient-to-br from-white/10 to-white/5 p-5 rounded-2xl border border-white/10 mb-6">
+                                        <h4 className="text-xs font-bold text-amber-400 mb-4 text-center uppercase tracking-widest flex items-center justify-center gap-2">
+                                            <Zap size={14} /> Instant Activation via UPI
+                                        </h4>
+                                        <div className="bg-white p-3 rounded-2xl w-36 h-36 md:w-44 md:h-44 mx-auto mb-4 shadow-xl">
+                                            <img src="/assets/payment-qr.jpg" alt="UPI QR Code" className="w-full h-full object-contain" onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect fill="%23f0f0f0" width="200" height="200"/><text x="50%" y="50%" font-family="Arial" font-size="14" fill="%23999" text-anchor="middle" dy=".3em">QR Code</text></svg>';
+                                            }} />
+                                        </div>
+                                        <p className="text-center text-xs text-slate-400 mb-2">Scan with any UPI app</p>
+                                        <div className="flex items-center justify-center gap-2 bg-black/40 p-3 rounded-xl border border-white/10">
+                                            <code className="text-xs font-mono text-amber-400 select-all">7439250914@kotak811</code>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <motion.button
+                                    whileHover={{ scale: user.is_pro ? 1 : 1.02 }}
+                                    whileTap={{ scale: user.is_pro ? 1 : 0.98 }}
+                                    className={`w-full py-4 rounded-2xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition-all ${user.is_pro
+                                        ? 'bg-emerald-500 text-white cursor-default'
+                                        : 'bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 text-white shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50'
+                                        }`}
+                                    disabled={user.is_pro}
+                                >
+                                    {user.is_pro ? (
+                                        <>✓ You're a Pro Member</>
+                                    ) : (
+                                        <>Upgrade Now <ArrowRight size={16} /></>
+                                    )}
+                                </motion.button>
                             </div>
-                        )}
-
-                        <button
-                            className={`w-full mt-8 py-3 md:py-4 rounded-2xl font-bold transition-all shadow-xl relative z-10 uppercase text-sm tracking-wide ${user.is_pro
-                                ? 'bg-emerald-500 text-white cursor-default shadow-emerald-500/20'
-                                : 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 hover:scale-[1.02] active:scale-95 shadow-amber-500/20'
-                                }`}
-                            disabled={user.is_pro}
-                        >
-                            {user.is_pro ? '✓ Pro Member' : 'Confirm Payment'}
-                        </button>
+                        </div>
                     </div>
                 </motion.div>
             </div>
 
-            <div className="mt-12 md:mt-20 text-center pb-8 md:pb-0">
-                <p className="text-slate-500 text-sm flex items-center justify-center gap-3 font-medium">
-                    <Shield size={16} className="text-teal-500" /> Secure UPI Payment & Instant Activation
-                </p>
+            {/* Testimonials */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mb-12"
+            >
+                <h3 className="text-center text-lg font-bold text-white mb-6">What Pro Members Say</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                    {testimonials.map((t, i) => (
+                        <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/10">
+                            <div className="flex items-center gap-3 mb-3">
+                                <span className="text-2xl">{t.avatar}</span>
+                                <div>
+                                    <p className="text-white font-medium text-sm">{t.name}</p>
+                                    <div className="flex gap-0.5">
+                                        {[...Array(t.rating)].map((_, j) => (
+                                            <Star key={j} size={12} className="fill-amber-400 text-amber-400" />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-slate-300 text-sm leading-relaxed">"{t.text}"</p>
+                        </div>
+                    ))}
+                </div>
+            </motion.div>
+
+            {/* Trust Badges */}
+            <div className="text-center">
+                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-slate-500 text-xs font-medium">
+                    <span className="flex items-center gap-2"><Shield size={14} className="text-emerald-500" /> Secure Payment</span>
+                    <span className="flex items-center gap-2"><Zap size={14} className="text-amber-500" /> Instant Activation</span>
+                    <span className="flex items-center gap-2"><Heart size={14} className="text-red-500" /> Cancel Anytime</span>
+                </div>
             </div>
         </div>
     );
 }
+
