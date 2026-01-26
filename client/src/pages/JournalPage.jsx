@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Save, Smile, Frown, Meh, Calendar, PenLine } from 'lucide-react';
+import { Save, Smile, Frown, Meh, Calendar, PenLine, Lock, Crown, Sparkles, TrendingUp, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import api from '../utils/api';
+import { ProBadge } from '../components/ProFeatureGate';
 
 export default function JournalPage() {
     const [entries, setEntries] = useState([]);
     const [content, setContent] = useState('');
     const [mood, setMood] = useState('neutral');
     const [isSaving, setIsSaving] = useState(false);
+    const [user, setUser] = useState({ is_pro: false });
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) setUser(JSON.parse(storedUser));
+    }, []);
 
     const fetchEntries = async () => {
         try {
@@ -137,6 +145,76 @@ export default function JournalPage() {
                 transition={{ delay: 0.2 }}
                 className="flex-none md:flex-1 w-full md:max-w-md flex flex-col gap-4 md:gap-6"
             >
+                {/* Pro Features for Journal */}
+                <div className="space-y-3">
+                    {/* AI Writing Prompts */}
+                    {!user.is_pro ? (
+                        <Link to="/subscription" className="block">
+                            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-4 hover:border-purple-500/40 transition-all">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-purple-500/20 rounded-xl">
+                                            <Sparkles size={18} className="text-purple-400" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-white font-bold text-sm">AI Writing Prompts</span>
+                                                <ProBadge />
+                                            </div>
+                                            <p className="text-slate-400 text-xs">Get personalized prompts daily</p>
+                                        </div>
+                                    </div>
+                                    <Crown size={16} className="text-amber-400" />
+                                </div>
+                            </div>
+                        </Link>
+                    ) : (
+                        <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-4">
+                            <div className="flex items-center gap-3 mb-2">
+                                <Sparkles size={18} className="text-purple-400" />
+                                <span className="text-white font-bold text-sm">Today's Prompt</span>
+                            </div>
+                            <p className="text-slate-300 text-sm italic">
+                                "What small win from today deserves recognition?"
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Export & Insights Row */}
+                    <div className="flex gap-3">
+                        {!user.is_pro ? (
+                            <Link to="/subscription" className="flex-1">
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-white/10 transition-all">
+                                    <Download size={16} className="text-slate-400" />
+                                    <span className="text-slate-400 text-xs font-medium">Export</span>
+                                    <ProBadge />
+                                </div>
+                            </Link>
+                        ) : (
+                            <button className="flex-1 bg-teal-500/10 border border-teal-500/20 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-teal-500/20 transition-all">
+                                <Download size={16} className="text-teal-400" />
+                                <span className="text-teal-400 text-xs font-medium">Export</span>
+                            </button>
+                        )}
+                        {!user.is_pro ? (
+                            <Link to="/subscription" className="flex-1">
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-white/10 transition-all">
+                                    <TrendingUp size={16} className="text-slate-400" />
+                                    <span className="text-slate-400 text-xs font-medium">Insights</span>
+                                    <ProBadge />
+                                </div>
+                            </Link>
+                        ) : (
+                            <Link to="/analytics" className="flex-1">
+                                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-emerald-500/20 transition-all">
+                                    <TrendingUp size={16} className="text-emerald-400" />
+                                    <span className="text-emerald-400 text-xs font-medium">Insights</span>
+                                </div>
+                            </Link>
+                        )}
+                    </div>
+                </div>
+
                 <div className="flex items-center justify-between px-2">
                     <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Recent Entries</h2>
                     <div className="p-2 bg-white/5 rounded-lg border border-white/5 text-slate-400">

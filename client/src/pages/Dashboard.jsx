@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Target, AlertCircle, Trash2, Edit3, Sparkles, Flame, TrendingUp, ChevronRight } from 'lucide-react';
+import { Plus, X, Target, AlertCircle, Trash2, Edit3, Sparkles, Flame, TrendingUp, ChevronRight, Brain, Lock, Crown, Zap } from 'lucide-react';
 import api from '../utils/api';
 import HabitRow from '../components/HabitRow';
+import { HabitLimitBanner, StreakFreezeCard, ProFeatureCard, ProBadge } from '../components/ProFeatureGate';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -116,7 +117,11 @@ export default function Dashboard() {
         fetchData();
     };
 
+    const FREE_HABIT_LIMIT = 3;
+    const hasHitLimit = !user.is_pro && habits.length >= FREE_HABIT_LIMIT;
+
     const openNewHabitModal = () => {
+        if (hasHitLimit) return; // Can't add more habits if limit reached
         setEditingHabit(null);
         setNewHabit({ title: '', description: '', identity_goal: '', color: '#14b8a6', goal_frequency: 'daily' });
         setShowModal(true);
@@ -154,15 +159,28 @@ export default function Dashboard() {
                         </h1>
                     </div>
 
-                    <motion.button
-                        onClick={openNewHabitModal}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-6 py-3 bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-bold rounded-2xl shadow-xl shadow-teal-500/20 flex items-center gap-2"
-                    >
-                        <Plus size={20} />
-                        New Habit
-                    </motion.button>
+                    {hasHitLimit ? (
+                        <Link to="/subscription">
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-bold rounded-2xl shadow-xl shadow-amber-500/20 flex items-center gap-2"
+                            >
+                                <Crown size={20} />
+                                Upgrade for More
+                            </motion.div>
+                        </Link>
+                    ) : (
+                        <motion.button
+                            onClick={openNewHabitModal}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-6 py-3 bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-bold rounded-2xl shadow-xl shadow-teal-500/20 flex items-center gap-2"
+                        >
+                            <Plus size={20} />
+                            New Habit
+                        </motion.button>
+                    )}
                 </motion.div>
             </header>
 
@@ -218,6 +236,61 @@ export default function Dashboard() {
                     <ChevronRight size={16} />
                 </Link>
             </motion.div>
+
+            {/* Habit Limit Banner for Free Users */}
+            {hasHitLimit && (
+                <HabitLimitBanner currentCount={habits.length} maxCount={FREE_HABIT_LIMIT} />
+            )}
+
+            {/* Pro Features Row */}
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+                {/* Streak Freeze */}
+                <StreakFreezeCard isPro={user.is_pro} freezesLeft={user.is_pro ? 3 : 0} />
+
+                {/* AI Daily Insight - Pro Only */}
+                {!user.is_pro ? (
+                    <Link to="/subscription" className="block">
+                        <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-4 hover:border-purple-500/40 transition-all">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-purple-500/20 rounded-xl">
+                                        <Brain size={20} className="text-purple-400" />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-white font-bold text-sm">AI Daily Insight</span>
+                                            <ProBadge />
+                                        </div>
+                                        <p className="text-slate-400 text-xs">Get personalized tips & predictions</p>
+                                    </div>
+                                </div>
+                                <span className="text-amber-400 text-xs font-bold">Unlock →</span>
+                            </div>
+                        </div>
+                    </Link>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-4"
+                    >
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 bg-purple-500/20 rounded-xl">
+                                <Brain size={20} className="text-purple-400" />
+                            </div>
+                            <span className="text-white font-bold text-sm">Today's AI Insight</span>
+                        </div>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                            {todayCompletions >= habits.length * 0.8
+                                ? "🔥 You're on fire! Your consistency is building strong neural pathways. Keep it up!"
+                                : todayCompletions >= habits.length * 0.5
+                                    ? "💪 Great progress! Try completing one more habit to boost your momentum."
+                                    : "🌅 Start with your easiest habit to build momentum for the day."
+                            }
+                        </p>
+                    </motion.div>
+                )}
+            </div>
 
             {/* Error Display */}
             <AnimatePresence>
