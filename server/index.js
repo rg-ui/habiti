@@ -77,8 +77,27 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
     console.log(`🚀 Habiti API v2.0 running on port ${PORT}`);
     console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`✨ Features: Templates, Focus Timer, Achievements`);
+
+    // Auto-create tables on start (Production-ready)
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const pool = require('./db');
+
+        const sqlPath = path.join(__dirname, 'db', 'init.sql');
+        if (fs.existsSync(sqlPath)) {
+            const sql = fs.readFileSync(sqlPath, 'utf8');
+            await pool.query(sql);
+            console.log("✅ Database initialized (Tables auto-created if needed)");
+        } else {
+            console.warn("⚠️ init.sql not found at:", sqlPath);
+        }
+    } catch (err) {
+        console.error("❌ Database initialization failed:", err.message);
+        // We don't exit process here so server stays up even if DB init fails (e.g. transient connection issue)
+    }
 });
