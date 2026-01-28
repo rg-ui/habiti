@@ -4,8 +4,8 @@ import { Play, Pause, RotateCcw, Coffee, Brain, Flame, Clock, Trophy, ChevronDow
 import api from '../utils/api';
 
 const TIMER_MODES = {
-    focus: { duration: 25 * 60, label: 'Focus', color: '#14b8a6', icon: Brain },
-    shortBreak: { duration: 5 * 60, label: 'Short Break', color: '#10b981', icon: Coffee },
+    focus: { duration: 25 * 60, label: 'Focus', color: '#10b981', icon: Brain },
+    shortBreak: { duration: 5 * 60, label: 'Short Break', color: '#4ade80', icon: Coffee },
     longBreak: { duration: 15 * 60, label: 'Long Break', color: '#6366f1', icon: Coffee },
 };
 
@@ -15,7 +15,7 @@ const Particles = () => (
         {[...Array(15)].map((_, i) => (
             <motion.div
                 key={i}
-                className="absolute w-1 h-1 rounded-full bg-white/20"
+                className="absolute w-1 h-1 rounded-full bg-emerald-500/20"
                 initial={{ x: Math.random() * 400, y: Math.random() * 400, opacity: 0 }}
                 animate={{
                     y: [null, -100],
@@ -149,7 +149,7 @@ export default function FocusPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center"
+                        className="fixed inset-0 bg-white/80 backdrop-blur-xl z-[100] flex items-center justify-center"
                     >
                         <motion.div
                             initial={{ scale: 0, rotate: -180 }}
@@ -167,8 +167,8 @@ export default function FocusPage() {
                             >
                                 🎉
                             </motion.div>
-                            <h2 className="text-4xl font-bold text-white mb-2">Session Complete!</h2>
-                            <p className="text-teal-400 text-xl">Great focus! Time for a break.</p>
+                            <h2 className="text-4xl font-bold text-slate-900 mb-2">Session Complete!</h2>
+                            <p className="text-[#10b981] text-xl">Great focus! Time for a break.</p>
                         </motion.div>
                     </motion.div>
                 )}
@@ -179,13 +179,14 @@ export default function FocusPage() {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500/10 to-indigo-500/10 rounded-full border border-teal-500/20 mb-4"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
+                    style={{ background: 'linear-gradient(135deg, rgba(163, 230, 53, 0.1) 0%, rgba(74, 222, 128, 0.1) 100%)', border: '1px solid rgba(163, 230, 53, 0.2)' }}
                 >
-                    <Sparkles size={16} className="text-teal-400" />
-                    <span className="text-xs font-bold text-teal-400 uppercase tracking-widest">Deep Work Mode</span>
+                    <Sparkles size={16} className="text-[#10b981]" />
+                    <span className="text-xs font-bold text-[#10b981] uppercase tracking-widest">Deep Work Mode</span>
                 </motion.div>
-                <h1 className="text-4xl font-bold text-white mb-2">Focus Timer</h1>
-                <p className="text-slate-400">Stay focused, take breaks, be productive.</p>
+                <h1 className="text-4xl font-bold text-slate-900 mb-2">Focus Timer</h1>
+                <p className="text-slate-500 font-medium">Stay focused, take breaks, be productive.</p>
             </header>
 
             {/* Mode Selector */}
@@ -197,12 +198,11 @@ export default function FocusPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className={`px-6 py-3 rounded-2xl font-medium transition-all relative overflow-hidden ${mode === key
-                                ? 'text-white shadow-lg'
-                                : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                            ? 'text-white shadow-lg shadow-emerald-500/20'
+                            : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:border-emerald-200'
                             }`}
                         style={{
                             backgroundColor: mode === key ? config.color : undefined,
-                            boxShadow: mode === key ? `0 10px 30px -10px ${config.color}` : undefined
                         }}
                     >
                         {config.label}
@@ -213,6 +213,7 @@ export default function FocusPage() {
             {/* Timer Display */}
             <div className="relative mx-auto w-80 h-80 mb-8">
                 <Particles />
+
 
                 {/* Glow effect */}
                 <motion.div
@@ -233,7 +234,7 @@ export default function FocusPage() {
                         cy="160"
                         r="150"
                         fill="none"
-                        stroke="rgba(255,255,255,0.05)"
+                        stroke="rgba(0,0,0,0.05)"
                         strokeWidth="8"
                     />
                     {/* Progress ring */}
@@ -276,7 +277,7 @@ export default function FocusPage() {
                         <ModeIcon size={32} style={{ color: currentConfig.color }} className="mb-4" />
                     </motion.div>
                     <motion.span
-                        className="text-7xl font-bold text-white font-mono tracking-tight"
+                        className="text-7xl font-bold text-slate-900 font-mono tracking-tight"
                         key={timeLeft}
                         initial={{ scale: 1.1, opacity: 0.5 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -293,7 +294,8 @@ export default function FocusPage() {
                 <div className="relative">
                     <button
                         onClick={() => setShowHabitDropdown(!showHabitDropdown)}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl text-slate-300 hover:bg-white/10 transition-colors border border-white/10"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 transition-colors"
+                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid #e5e7eb, 0.5)' }}
                     >
                         {selectedHabit ? (
                             <>
@@ -314,11 +316,12 @@ export default function FocusPage() {
                                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-slate-900 border border-white/10 rounded-xl shadow-2xl z-50 min-w-[200px] py-2 overflow-hidden"
+                                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-xl shadow-2xl z-50 min-w-[200px] py-2 overflow-hidden"
+                                    style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb, 0.5)' }}
                                 >
                                     <button
                                         onClick={() => { setSelectedHabit(null); setShowHabitDropdown(false); }}
-                                        className="w-full px-4 py-2 text-left text-slate-400 hover:bg-white/5"
+                                        className="w-full px-4 py-2 text-left text-slate-600 hover:bg-white/5"
                                     >
                                         No habit
                                     </button>
@@ -326,7 +329,7 @@ export default function FocusPage() {
                                         <button
                                             key={habit.id}
                                             onClick={() => { setSelectedHabit(habit); setShowHabitDropdown(false); }}
-                                            className="w-full px-4 py-2 text-left text-white hover:bg-white/5 flex items-center gap-2"
+                                            className="w-full px-4 py-2 text-left text-slate-900 hover:bg-white/5 flex items-center gap-2"
                                         >
                                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: habit.color }} />
                                             {habit.title}
@@ -340,7 +343,7 @@ export default function FocusPage() {
 
                 <button
                     onClick={() => setSoundEnabled(!soundEnabled)}
-                    className={`p-3 rounded-xl transition-all ${soundEnabled ? 'bg-white/10 text-white' : 'bg-white/5 text-slate-500'}`}
+                    className={`p-3 rounded-xl transition-all ${soundEnabled ? 'bg-white/10 text-slate-900' : 'bg-white/5 text-slate-500'}`}
                 >
                     {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
                 </button>
@@ -352,7 +355,8 @@ export default function FocusPage() {
                     onClick={resetTimer}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="p-4 bg-white/5 rounded-2xl text-slate-400 hover:bg-white/10 hover:text-white transition-colors border border-white/5"
+                    className="p-4 rounded-2xl text-slate-600 hover:text-slate-900 transition-colors"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid #e5e7eb, 0.5)' }}
                 >
                     <RotateCcw size={24} />
                 </motion.button>
@@ -361,7 +365,7 @@ export default function FocusPage() {
                     onClick={toggleTimer}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="relative p-8 rounded-full text-white font-bold shadow-2xl transition-all"
+                    className="relative p-8 rounded-full text-slate-900 font-bold shadow-2xl transition-all"
                     style={{
                         backgroundColor: isRunning ? '#ef4444' : currentConfig.color,
                         boxShadow: `0 20px 40px -10px ${isRunning ? '#ef4444' : currentConfig.color}`,
@@ -377,9 +381,10 @@ export default function FocusPage() {
 
                 <motion.div
                     whileHover={{ scale: 1.1 }}
-                    className="p-4 bg-white/5 rounded-2xl text-center border border-white/5 min-w-[80px]"
+                    className="p-4 rounded-2xl text-center min-w-[80px]"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid #e5e7eb, 0.5)' }}
                 >
-                    <span className="text-2xl font-bold text-white block">{sessions}</span>
+                    <span className="text-2xl font-bold text-slate-900 block">{sessions}</span>
                     <span className="text-xs text-slate-500">sessions</span>
                 </motion.div>
             </div>
@@ -400,17 +405,17 @@ export default function FocusPage() {
                         whileHover={{ scale: 1.05, y: -5 }}
                         className="relative p-6 rounded-2xl text-center overflow-hidden group"
                         style={{
-                            background: `linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
-                            border: '1px solid rgba(255,255,255,0.05)',
+                            background: `linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%)`,
+                            border: '1px solid #e5e7eb, 0.5)',
                         }}
                     >
                         <div className={`absolute inset-0 bg-gradient-to-br from-${stat.color}-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity`} />
                         <stat.icon size={24} className={`mx-auto mb-2 text-${stat.color}-400`} />
-                        <p className="text-3xl font-bold text-white">{stat.value}</p>
+                        <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
                         <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mt-1">{stat.label}</p>
                     </motion.div>
                 ))}
             </div>
-        </div>
+        </div >
     );
 }

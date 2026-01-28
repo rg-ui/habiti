@@ -164,7 +164,7 @@ export default function Dashboard() {
     const todayCompletions = habits.filter(h => h.completedDates.includes(format(new Date(), 'yyyy-MM-dd'))).length;
     const totalStreak = habits.reduce((acc, h) => acc + (h.streak || 0), 0);
 
-    const colorPresets = ['#14b8a6', '#6366f1', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#10b981', '#3b82f6'];
+    const colorPresets = ['#10b981', '#4ade80', '#22c55e', '#f59e0b', '#ef4444', '#ec4899', '#6366f1', '#3b82f6'];
 
     return (
         <div className="max-w-6xl mx-auto pb-20 relative">
@@ -179,10 +179,10 @@ export default function Dashboard() {
                     className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6"
                 >
                     <div>
-                        <p className="text-zinc-500 text-sm font-medium mb-1">
-                            {greeting}, <span className="text-zinc-300">{user.username}</span>
+                        <p className="text-slate-600 text-sm font-medium mb-1">
+                            Hustle Hard
                         </p>
-                        <h1 className="text-3xl lg:text-4xl font-semibold text-zinc-100 tracking-tight">
+                        <h1 className="text-3xl lg:text-4xl font-bold text-black tracking-tight">
                             Dashboard
                         </h1>
                     </div>
@@ -203,7 +203,8 @@ export default function Dashboard() {
                             onClick={openNewHabitModal}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="px-5 py-2.5 bg-teal-500 text-zinc-950 font-semibold rounded-lg flex items-center gap-2 text-sm"
+                            className="px-5 py-2.5 font-semibold rounded-lg flex items-center gap-2 text-sm"
+                            style={{ backgroundColor: '#10b981', color: '#ffffff' }}
                         >
                             <Plus size={16} />
                             New Habit
@@ -230,8 +231,8 @@ export default function Dashboard() {
                         whileHover={{ scale: 1.02, y: -2 }}
                         className="relative p-5 rounded-2xl overflow-hidden group"
                         style={{
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-                            border: '1px solid rgba(255,255,255,0.05)',
+                            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                            border: '1px solid #e5e7eb, 0.5)',
                         }}
                     >
                         <div className={`absolute top-0 right-0 w-20 h-20 bg-${stat.color}-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
@@ -239,9 +240,9 @@ export default function Dashboard() {
                             <div className={`p-2 rounded-xl bg-${stat.color}-500/10`}>
                                 <stat.icon size={18} className={`text-${stat.color}-400`} />
                             </div>
-                            <span className="text-slate-500 text-sm font-medium">{stat.label}</span>
+                            <span className="text-slate-700 text-sm font-medium">{stat.label}</span>
                         </div>
-                        <p className="text-3xl font-bold text-white">{stat.value}<span className="text-lg text-slate-500">{stat.suffix}</span></p>
+                        <p className="text-3xl font-bold text-black">{stat.value}<span className="text-lg text-slate-600">{stat.suffix}</span></p>
                     </motion.div>
                 ))}
             </motion.div>
@@ -253,12 +254,12 @@ export default function Dashboard() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
             >
-                <Link to="/focus" className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 font-medium hover:bg-indigo-500/20 transition-colors">
+                <Link to="/focus" className="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-2xl font-medium transition-colors" style={{ backgroundColor: 'rgba(163, 230, 53, 0.1)', border: '1px solid rgba(163, 230, 53, 0.2)', color: '#10b981' }}>
                     <Sparkles size={18} />
                     Start Focus Session
                     <ChevronRight size={16} />
                 </Link>
-                <Link to="/templates" className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-400 font-medium hover:bg-amber-500/20 transition-colors">
+                <Link to="/templates" className="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-2xl font-medium transition-colors" style={{ backgroundColor: 'rgba(74, 222, 128, 0.1)', border: '1px solid rgba(74, 222, 128, 0.2)', color: '#4ade80' }}>
                     <Target size={18} />
                     Browse Templates
                     <ChevronRight size={16} />
@@ -286,10 +287,10 @@ export default function Dashboard() {
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-white font-bold text-sm">AI Daily Insight</span>
+                                            <span className="text-black font-bold text-sm">AI Daily Insight</span>
                                             <ProBadge />
                                         </div>
-                                        <p className="text-slate-400 text-xs">Get personalized tips & predictions</p>
+                                        <p className="text-slate-600 text-xs">Get personalized tips & predictions</p>
                                     </div>
                                 </div>
                                 <span className="text-amber-400 text-xs font-bold">Unlock →</span>
@@ -306,19 +307,19 @@ export default function Dashboard() {
                             <div className="p-2 bg-purple-500/20 rounded-xl">
                                 <Brain size={20} className="text-purple-400" />
                             </div>
-                            <span className="text-white font-bold text-sm">Today's AI Insight</span>
+                            <span className="text-black font-bold text-sm">Today's AI Insight</span>
                             {aiInsight?.stats && (
                                 <span className="text-xs text-purple-400 bg-purple-500/20 px-2 py-0.5 rounded-full">
                                     {aiInsight.stats.completionRate}% done
                                 </span>
                             )}
                         </div>
-                        <p className="text-slate-300 text-sm leading-relaxed">
+                        <p className="text-slate-800 text-sm leading-relaxed">
                             {aiInsight ? (
                                 <>
                                     <span className="mr-1">{aiInsight.emoji}</span>
                                     {aiInsight.insight}
-                                    <span className="block mt-1 text-purple-300 text-xs">{aiInsight.tip}</span>
+                                    <span className="block mt-1 text-purple-600 text-xs">{aiInsight.tip}</span>
                                 </>
                             ) : (
                                 "Loading your personalized insight..."
@@ -387,19 +388,21 @@ export default function Dashboard() {
                             className="py-24 flex flex-col items-center justify-center text-center"
                         >
                             <motion.div
-                                className="w-24 h-24 bg-gradient-to-br from-teal-500/20 to-emerald-500/20 rounded-3xl flex items-center justify-center mb-6 border border-teal-500/20"
+                                className="w-24 h-24 rounded-3xl flex items-center justify-center mb-6"
+                                style={{ background: 'linear-gradient(135deg, rgba(163, 230, 53, 0.2) 0%, rgba(74, 222, 128, 0.2) 100%)', border: '1px solid rgba(163, 230, 53, 0.3)' }}
                                 animate={{ rotate: [0, 5, -5, 0] }}
                                 transition={{ duration: 4, repeat: Infinity }}
                             >
-                                <Target size={40} className="text-teal-400" />
+                                <Target size={40} className="text-[#10b981]" />
                             </motion.div>
-                            <h3 className="text-2xl font-bold text-white mb-2">No habits yet</h3>
-                            <p className="text-slate-400 max-w-sm mx-auto mb-8">Create your first habit to start building the identity you want.</p>
+                            <h3 className="text-2xl font-bold text-black mb-2">No habits yet</h3>
+                            <p className="text-slate-700 max-w-sm mx-auto mb-8">Create your first habit to start building the identity you want.</p>
                             <motion.button
                                 onClick={openNewHabitModal}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="px-8 py-4 bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-bold rounded-2xl shadow-xl shadow-teal-500/20"
+                                className="px-8 py-4 font-bold rounded-2xl shadow-xl"
+                                style={{ backgroundColor: '#10b981', color: '#ffffff', boxShadow: '0 10px 40px -10px rgba(163, 230, 53, 0.3)' }}
                             >
                                 Create Your First Habit <Plus size={20} className="inline ml-2" />
                             </motion.button>
@@ -416,23 +419,25 @@ export default function Dashboard() {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-slate-950 border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden"
+                            className="rounded-3xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden"
+                            style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb, 0.5)' }}
                         >
                             {/* Glow */}
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-teal-500/20 rounded-full blur-[80px]" />
+                            <div className="absolute top-0 right-0 w-40 h-40 bg-[#10b981]/15 rounded-full blur-[80px]" />
 
                             <button
                                 onClick={() => { setShowModal(false); setEditingHabit(null); }}
-                                className="absolute top-4 right-4 text-slate-500 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10"
+                                className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 p-2 rounded-full transition-colors z-10"
+                                style={{ backgroundColor: 'transparent' }}
                             >
                                 <X size={20} />
                             </button>
 
                             <div className="relative z-10">
-                                <h2 className="text-2xl font-bold text-white mb-2">
+                                <h2 className="text-2xl font-bold text-black mb-2">
                                     {editingHabit ? 'Edit Habit' : '✨ New Habit'}
                                 </h2>
-                                <p className="text-slate-400 text-sm mb-6">
+                                <p className="text-slate-700 text-sm mb-6">
                                     {editingHabit ? 'Update your habit details' : 'What identity do you want to build?'}
                                 </p>
 
@@ -446,7 +451,8 @@ export default function Dashboard() {
                                     <div>
                                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Identity Goal</label>
                                         <input
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all placeholder:text-slate-600"
+                                            className="w-full rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#4ade80]/50 transition-all placeholder:text-slate-600"
+                                            style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', border: '1px solid #e5e7eb, 0.5)' }}
                                             value={newHabit.identity_goal}
                                             onChange={e => setNewHabit({ ...newHabit, identity_goal: e.target.value })}
                                             placeholder="e.g. Become a Runner"
@@ -457,7 +463,8 @@ export default function Dashboard() {
                                     <div>
                                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Habit Name *</label>
                                         <input
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-lg font-semibold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all placeholder:text-slate-600"
+                                            className="w-full rounded-xl px-4 py-3 text-slate-900 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-[#4ade80]/50 transition-all placeholder:text-slate-600"
+                                            style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', border: '1px solid #e5e7eb, 0.5)' }}
                                             value={newHabit.title}
                                             onChange={e => setNewHabit({ ...newHabit, title: e.target.value })}
                                             placeholder="e.g. Run 5km"
@@ -474,7 +481,7 @@ export default function Dashboard() {
                                                     key={color}
                                                     type="button"
                                                     onClick={() => setNewHabit({ ...newHabit, color })}
-                                                    className={`w-10 h-10 rounded-xl transition-all ${newHabit.color === color ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-110' : 'hover:scale-105'}`}
+                                                    className={`w-10 h-10 rounded-xl transition-all ${newHabit.color === color ? 'ring-2 ring-white ring-offset-2 ring-offset-[#f9fafb] scale-110' : 'hover:scale-105'}`}
                                                     style={{ backgroundColor: color }}
                                                 />
                                             ))}
@@ -485,7 +492,8 @@ export default function Dashboard() {
                                         type="submit"
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full py-4 bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-bold rounded-xl shadow-xl shadow-teal-500/20 mt-4"
+                                        className="w-full py-4 font-bold rounded-xl shadow-xl mt-4"
+                                        style={{ backgroundColor: '#10b981', color: '#ffffff', boxShadow: '0 10px 40px -10px rgba(163, 230, 53, 0.3)' }}
                                     >
                                         {editingHabit ? 'Save Changes' : 'Create Habit'} ✨
                                     </motion.button>
@@ -504,7 +512,8 @@ export default function Dashboard() {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="bg-slate-950 border border-white/10 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center"
+                            className="rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center"
+                            style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb, 0.5)' }}
                         >
                             <motion.div
                                 className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6"
@@ -513,14 +522,15 @@ export default function Dashboard() {
                             >
                                 <Trash2 size={32} className="text-red-500" />
                             </motion.div>
-                            <h2 className="text-xl font-bold text-white mb-2">Delete Habit?</h2>
-                            <p className="text-slate-400 mb-6">
-                                Delete <span className="text-white font-semibold">"{deleteConfirm.title}"</span>? This cannot be undone.
+                            <h2 className="text-xl font-bold text-slate-900 mb-2">Delete Habit?</h2>
+                            <p className="text-slate-600 mb-6">
+                                Delete <span className="text-slate-900 font-semibold">"{deleteConfirm.title}"</span>? This cannot be undone.
                             </p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setDeleteConfirm(null)}
-                                    className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors"
+                                    className="flex-1 py-3 text-slate-900 font-medium rounded-xl transition-colors"
+                                    style={{ backgroundColor: '#e5e7eb, 0.5)' }}
                                 >
                                     Cancel
                                 </button>
@@ -528,7 +538,7 @@ export default function Dashboard() {
                                     onClick={() => handleDeleteHabit(deleteConfirm.id)}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-white font-bold rounded-xl transition-colors"
+                                    className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-slate-900 font-bold rounded-xl transition-colors"
                                 >
                                     Delete
                                 </motion.button>

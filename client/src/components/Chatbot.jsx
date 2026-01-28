@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, Sparkles, Bot, Quote, Zap, ChevronRight, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
+import chatbotIcon from '../assets/chatbot_icon.png';
 
 const QUICK_ACTIONS = [
     { icon: '💪', label: 'Motivate me', message: 'I need some motivation' },
@@ -100,7 +101,7 @@ export default function Chatbot() {
 
     const formatMessage = (content) => {
         return content.split('\n').map((line, i) => {
-            line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-teal-400">$1</strong>');
+            line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-emerald-600">$1</strong>');
             return (
                 <span key={i} dangerouslySetInnerHTML={{ __html: line }} className="block" />
             );
@@ -119,15 +120,16 @@ export default function Chatbot() {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleOpen}
-                        className="fixed bottom-24 md:bottom-6 right-4 md:right-6 w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-teal-400 to-emerald-500 text-slate-900 rounded-full md:rounded-2xl shadow-2xl shadow-teal-500/30 flex items-center justify-center z-40"
+                        className="fixed bottom-24 md:bottom-6 right-4 md:right-6 w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-full md:rounded-2xl shadow-xl shadow-emerald-500/30 flex items-center justify-center z-40 overflow-hidden border-2 border-white"
                     >
                         <motion.div
-                            animate={{ rotate: [0, 10, -10, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
+                            animate={{ rotate: [0, 5, -5, 0] }}
+                            transition={{ duration: 4, repeat: Infinity }}
+                            className="w-full h-full p-2"
                         >
-                            <Sparkles size={24} className="md:w-7 md:h-7" />
+                            <img src={chatbotIcon} alt="AI Coach" className="w-full h-full object-cover" />
                         </motion.div>
-                        <span className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-red-500 rounded-full border-2 border-slate-950 animate-pulse" />
+                        <span className="absolute top-0 right-0 w-3 h-3 md:w-4 md:h-4 bg-red-500 rounded-full border-2 border-white animate-pulse z-50" />
                     </motion.button>
                 )}
             </AnimatePresence>
@@ -139,28 +141,31 @@ export default function Chatbot() {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed inset-0 md:inset-auto md:bottom-6 md:right-6 md:w-[400px] md:h-[600px] bg-slate-950 md:border md:border-white/10 md:rounded-3xl shadow-2xl overflow-hidden z-[100] flex flex-col"
+                        className="fixed inset-0 md:inset-auto md:bottom-6 md:right-6 md:w-[400px] md:h-[600px] bg-white/95 backdrop-blur-xl md:border md:border-slate-200 md:rounded-3xl shadow-2xl overflow-hidden z-[100] flex flex-col"
                     >
                         {/* Header */}
-                        <div className="p-4 md:p-5 bg-gradient-to-r from-teal-500/10 to-emerald-500/10 border-b border-white/5 safe-area-top">
+                        <div className="p-4 md:p-5 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 border-b border-slate-100 safe-area-top">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-xl flex items-center justify-center text-slate-900">
-                                        <Bot size={20} className="md:w-6 md:h-6" />
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full overflow-hidden flex items-center justify-center border-2 border-white shadow-sm p-1">
+                                        <img src={chatbotIcon} alt="AI Coach" className="w-full h-full object-cover" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-white text-sm md:text-base">Habit Coach</h3>
-                                        <span className="text-xs text-teal-400 flex items-center gap-1">
-                                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-teal-400 rounded-full animate-pulse" />
-                                            Always here for you
-                                        </span>
+                                        <h3 className="font-bold text-slate-900 text-sm md:text-base">Habit Coach</h3>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                            </span>
+                                            <span className="text-xs text-slate-500 font-medium">Online & Ready</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="p-2 hover:bg-white/10 rounded-xl transition-colors text-slate-400 hover:text-white tap-target"
+                                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400 hover:text-slate-900 tap-target"
                                 >
-                                    <X size={24} />
+                                    <X size={20} />
                                 </button>
                             </div>
                         </div>
@@ -170,20 +175,22 @@ export default function Chatbot() {
                             <motion.div
                                 initial={{ opacity: 0, y: -20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mx-3 md:mx-4 mt-3 md:mt-4 p-3 md:p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl md:rounded-2xl"
+                                className="mx-3 md:mx-4 mt-3 md:mt-4 p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl shadow-sm"
                             >
-                                <div className="flex items-start gap-2 md:gap-3">
-                                    <Quote size={14} className="text-amber-400 mt-1 flex-shrink-0 md:w-4 md:h-4" />
+                                <div className="flex items-start gap-3">
+                                    <div className="p-1.5 bg-amber-100 rounded-lg">
+                                        <Quote size={14} className="text-amber-600" />
+                                    </div>
                                     <div>
-                                        <p className="text-white text-xs md:text-sm italic">"{dailyQuote.quote}"</p>
-                                        <p className="text-amber-400 text-[10px] md:text-xs mt-1">— {dailyQuote.author}</p>
+                                        <p className="text-slate-800 text-sm italic font-medium leading-relaxed">"{dailyQuote.quote}"</p>
+                                        <p className="text-amber-600 text-xs mt-2 font-bold uppercase tracking-wide">— {dailyQuote.author}</p>
                                     </div>
                                 </div>
                             </motion.div>
                         )}
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 scrollbar-hide">
+                        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4 scrollbar-hide bg-slate-50/50">
                             {messages.map((msg, i) => (
                                 <motion.div
                                     key={i}
@@ -191,25 +198,25 @@ export default function Chatbot() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div className={`max-w-[85%] p-3 md:p-4 rounded-2xl ${msg.role === 'user'
-                                            ? 'bg-teal-500 text-slate-900 rounded-br-sm'
-                                            : 'bg-white/5 text-slate-200 rounded-bl-sm border border-white/5'
+                                    <div className={`max-w-[85%] p-4 rounded-2xl shadow-sm ${msg.role === 'user'
+                                        ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-br-sm'
+                                        : 'bg-white text-slate-700 rounded-bl-sm border border-slate-100'
                                         }`}>
                                         {msg.role === 'assistant' && (
                                             <div className="flex items-center gap-2 mb-2">
-                                                <Sparkles size={12} className="text-teal-400" />
-                                                <span className="text-[10px] md:text-xs font-bold text-teal-400">AI Coach</span>
+                                                <Sparkles size={14} className="text-emerald-500" />
+                                                <span className="text-xs font-bold text-emerald-600 uppercase tracking-wide">AI Coach</span>
                                             </div>
                                         )}
-                                        <div className={`text-xs md:text-sm leading-relaxed ${msg.role === 'user' ? 'font-medium' : ''}`}>
+                                        <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'font-medium' : ''}`}>
                                             {msg.role === 'assistant' ? formatMessage(msg.content) : msg.content}
                                         </div>
                                         {msg.userData && (
-                                            <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-white/10 flex gap-3">
-                                                <span className="text-[10px] md:text-xs text-slate-400">
+                                            <div className="mt-3 pt-3 border-t border-slate-100 flex gap-3">
+                                                <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                                     ✅ {msg.userData.todayCompleted}/{msg.userData.totalHabits}
                                                 </span>
-                                                <span className="text-[10px] md:text-xs text-slate-400">
+                                                <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                                     🔥 {msg.userData.streak} streak
                                                 </span>
                                             </div>
@@ -225,17 +232,17 @@ export default function Chatbot() {
                                     animate={{ opacity: 1 }}
                                     className="pt-2"
                                 >
-                                    <p className="text-[10px] md:text-xs text-slate-500 mb-2 md:mb-3">Quick actions:</p>
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-3 px-1">Suggested actions</p>
+                                    <div className="grid grid-cols-2 gap-2.5">
                                         {QUICK_ACTIONS.map((action, i) => (
                                             <motion.button
                                                 key={i}
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => handleQuickAction(action)}
-                                                className="flex items-center gap-2 p-2.5 md:p-3 bg-white/5 active:bg-white/10 border border-white/5 rounded-xl text-left text-xs md:text-sm text-slate-300 transition-colors"
+                                                className="flex items-center gap-3 p-3 bg-white hover:bg-emerald-50/50 border border-slate-200 hover:border-emerald-200 rounded-xl text-left transition-all shadow-sm hover:shadow-md group"
                                             >
-                                                <span>{action.icon}</span>
-                                                <span className="truncate">{action.label}</span>
+                                                <span className="text-lg group-hover:scale-110 transition-transform">{action.icon}</span>
+                                                <span className="text-xs font-bold text-slate-600 group-hover:text-emerald-700 truncate">{action.label}</span>
                                             </motion.button>
                                         ))}
                                     </div>
@@ -247,19 +254,18 @@ export default function Chatbot() {
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    className="flex items-center gap-2 text-slate-400"
+                                    className="flex items-center gap-3 p-2"
                                 >
-                                    <div className="flex gap-1">
+                                    <div className="flex gap-1.5 p-3 bg-white rounded-2xl rounded-bl-sm border border-slate-100 shadow-sm">
                                         {[0, 0.1, 0.2].map((delay, i) => (
                                             <motion.div
                                                 key={i}
-                                                animate={{ y: [0, -5, 0] }}
-                                                transition={{ duration: 0.5, repeat: Infinity, delay }}
-                                                className="w-1.5 h-1.5 md:w-2 md:h-2 bg-teal-400 rounded-full"
+                                                animate={{ y: [0, -6, 0] }}
+                                                transition={{ duration: 0.6, repeat: Infinity, delay }}
+                                                className="w-2 h-2 bg-emerald-400 rounded-full"
                                             />
                                         ))}
                                     </div>
-                                    <span className="text-[10px] md:text-xs">Thinking...</span>
                                 </motion.div>
                             )}
 
@@ -267,15 +273,15 @@ export default function Chatbot() {
                         </div>
 
                         {/* Input */}
-                        <div className="p-3 md:p-4 border-t border-white/5 bg-slate-900/50 safe-area-bottom">
-                            <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">
+                        <div className="p-4 border-t border-slate-100 bg-white safe-area-bottom">
+                            <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2 relative">
                                 <input
                                     ref={inputRef}
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     placeholder="Ask me anything..."
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-teal-500 transition-colors"
+                                    className="flex-1 bg-slate-50 border-0 rounded-2xl px-5 py-4 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 transition-all shadow-inner"
                                     disabled={loading}
                                     style={{ fontSize: '16px' }}
                                 />
@@ -283,14 +289,17 @@ export default function Chatbot() {
                                     type="submit"
                                     disabled={loading || !input.trim()}
                                     whileTap={{ scale: 0.95 }}
-                                    className="p-3 bg-teal-500 text-slate-900 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed tap-target"
+                                    className="absolute right-2 top-2 bottom-2 aspect-square bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-200 flex items-center justify-center hover:shadow-lg transition-all"
                                 >
-                                    <Send size={20} />
+                                    <Send size={18} />
                                 </motion.button>
                             </form>
-                            <p className="text-[9px] md:text-[10px] text-slate-600 text-center mt-2">
-                                Personalized advice based on your habits
-                            </p>
+                            <div className="flex items-center justify-center gap-1.5 mt-3 opacity-60">
+                                <Sparkles size={10} className="text-emerald-500" />
+                                <p className="text-[10px] text-slate-400 font-medium">
+                                    AI-powered habit coaching
+                                </p>
+                            </div>
                         </div>
                     </motion.div>
                 )}

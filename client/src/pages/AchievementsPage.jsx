@@ -100,70 +100,75 @@ export default function AchievementsPage() {
     return (
         <div className="max-w-5xl mx-auto pb-20">
             {/* Header */}
-            <header className="text-center mb-12">
+            <header className="flex flex-col items-center justify-center pt-8 mb-16">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-amber-500/30"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-24 h-24 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-orange-500/20"
                 >
-                    <Trophy size={40} className="text-white" />
+                    <Trophy size={48} className="text-white" strokeWidth={1.5} />
                 </motion.div>
-                <h1 className="text-4xl font-bold text-white mb-2">Achievements</h1>
-                <p className="text-slate-400">Your badges of honor. Keep building habits to unlock more!</p>
 
-                {/* Progress */}
-                <div className="inline-flex items-center gap-4 mt-6 px-6 py-3 bg-white/5 rounded-2xl">
-                    <div className="text-center">
-                        <p className="text-2xl font-bold text-white">{achievements.total_earned}</p>
-                        <p className="text-xs text-slate-500 uppercase">Earned</p>
+                <h1 className="text-5xl font-bold text-orange-500 mb-3 tracking-tight">Achievements</h1>
+                <p className="text-slate-600 text-lg font-medium">Your badges of honor. Keep building habits to unlock more!</p>
+
+                {/* Pill Stats Container */}
+                <div className="flex items-center gap-8 mt-10 px-8 py-4 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50">
+                    <div className="text-center min-w-[80px]">
+                        <p className="text-3xl font-bold text-black leading-none mb-1">{achievements.total_earned}</p>
+                        <p className="text-[10px] text-slate-600 font-bold tracking-widest uppercase">Earned</p>
                     </div>
-                    <div className="w-px h-8 bg-white/10" />
-                    <div className="text-center">
-                        <p className="text-2xl font-bold text-slate-500">{achievements.total_available}</p>
-                        <p className="text-xs text-slate-500 uppercase">Total</p>
+                    <div className="w-px h-10 bg-slate-100" />
+                    <div className="text-center min-w-[80px]">
+                        <p className="text-3xl font-bold text-slate-400 leading-none mb-1">{achievements.total_available}</p>
+                        <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase">Total</p>
                     </div>
-                    <div className="w-px h-8 bg-white/10" />
+                    <div className="w-px h-10 bg-slate-100" />
                     <button
                         onClick={checkForNewAchievements}
                         disabled={checking}
-                        className="px-4 py-2 bg-teal-500 text-slate-900 rounded-xl font-bold text-sm hover:bg-teal-400 transition-colors disabled:opacity-50"
+                        className="px-6 py-3 bg-emerald-100/50 text-emerald-600 hover:bg-emerald-100 rounded-xl font-bold text-sm transition-all disabled:opacity-50 border border-emerald-100"
                     >
-                        {checking ? 'Checking...' : 'Check for New'}
+                        {checking ? 'Checking...' : 'Check'}
                     </button>
                 </div>
             </header>
 
             {/* Earned Achievements */}
             {achievements.earned.length > 0 && (
-                <section className="mb-16">
-                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                        <Sparkles size={20} className="text-amber-400" />
-                        Your Badges
+                <section className="mb-20">
+                    <h2 className="text-3xl font-bold text-black mb-10 flex items-center gap-4">
+                        <div className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <Sparkles size={24} className="text-orange-500" />
+                        </div>
+                        Your Collection
                     </h2>
 
                     {Object.entries(earnedGroups).map(([category, badges]) => (
-                        <div key={category} className="mb-8">
-                            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">
+                        <div key={category} className="mb-12">
+                            <h3 className="text-xs font-bold text-slate-600 uppercase tracking-[0.2em] mb-6 pl-1">
                                 {CATEGORY_NAMES[category] || category}
                             </h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {badges.map((badge, i) => (
                                     <motion.div
                                         key={badge.badge_type}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.05 }}
-                                        whileHover={{ scale: 1.05, y: -5 }}
+                                        whileHover={{ y: -8, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)" }}
                                         onClick={() => setSelectedBadge(badge)}
-                                        className="glass-card p-6 rounded-2xl text-center cursor-pointer group"
+                                        className="bg-white border border-slate-100 p-8 rounded-[2rem] text-center cursor-pointer group transition-all duration-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                                     >
-                                        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+                                        <div className="text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm">
                                             {BADGE_ICONS[badge.badge_type] || '🏆'}
                                         </div>
-                                        <p className="font-bold text-white text-sm">{badge.badge_name}</p>
-                                        <p className="text-xs text-slate-500 mt-1">
-                                            {new Date(badge.earned_at).toLocaleDateString()}
-                                        </p>
+                                        <p className="font-bold text-black text-lg mb-2">{badge.badge_name}</p>
+                                        <div className="inline-block px-3 py-1 bg-slate-50 rounded-lg">
+                                            <p className="text-xs text-slate-600 font-semibold uppercase tracking-wide">
+                                                Earned
+                                            </p>
+                                        </div>
                                     </motion.div>
                                 ))}
                             </div>
@@ -175,29 +180,35 @@ export default function AchievementsPage() {
             {/* Locked Achievements */}
             {achievements.available.length > 0 && (
                 <section>
-                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                        <Lock size={20} className="text-slate-500" />
-                        Locked Badges
+                    <h2 className="text-3xl font-bold text-black mb-10 flex items-center gap-4">
+                        <div className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <Lock size={24} className="text-slate-400" />
+                        </div>
+                        To Unlock
                     </h2>
 
                     {Object.entries(availableGroups).map(([category, badges]) => (
-                        <div key={category} className="mb-8">
-                            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">
+                        <div key={category} className="mb-12">
+                            <h3 className="text-xs font-bold text-slate-600 uppercase tracking-[0.2em] mb-6 pl-1">
                                 {CATEGORY_NAMES[category] || category}
                             </h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {badges.map((badge) => (
                                     <motion.div
                                         key={badge.badge_type}
-                                        whileHover={{ scale: 1.02 }}
+                                        whileHover={{ scale: 1.02, backgroundColor: '#ffffff' }}
                                         onClick={() => setSelectedBadge({ ...badge, locked: true })}
-                                        className="bg-slate-900/50 p-6 rounded-2xl text-center cursor-pointer border border-white/5 opacity-60 hover:opacity-80 transition-opacity"
+                                        className="bg-white/50 border border-slate-100 p-8 rounded-[2rem] text-center cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-200"
                                     >
-                                        <div className="text-4xl mb-3 grayscale">
+                                        <div className="text-5xl mb-6 opacity-30 grayscale filter">
                                             {BADGE_ICONS[badge.badge_type] || '🏆'}
                                         </div>
-                                        <p className="font-bold text-slate-500 text-sm">{badge.name}</p>
-                                        <p className="text-xs text-slate-600 mt-1">???</p>
+                                        <p className="font-bold text-slate-400 text-lg mb-2">{badge.name}</p>
+                                        <div className="inline-block px-3 py-1">
+                                            <p className="text-xs text-slate-300 font-bold uppercase tracking-widest">
+                                                LOCKED
+                                            </p>
+                                        </div>
                                     </motion.div>
                                 ))}
                             </div>
@@ -209,48 +220,46 @@ export default function AchievementsPage() {
             {/* Badge Detail Modal */}
             <AnimatePresence>
                 {selectedBadge && (
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+                    <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-slate-950 border border-white/10 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center relative"
+                            className="bg-white border border-slate-100 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center relative"
                         >
                             <button
                                 onClick={() => setSelectedBadge(null)}
-                                className="absolute top-4 right-4 text-slate-500 hover:text-white text-2xl"
+                                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl transition-colors"
                             >
                                 ×
                             </button>
 
-                            <div className={`text-6xl mb-6 ${selectedBadge.locked ? 'grayscale' : ''}`}>
+                            <div className={`text-6xl mb-6 ${selectedBadge.locked ? 'grayscale opacity-50' : 'filter drop-shadow-xl'}`}>
                                 {BADGE_ICONS[selectedBadge.badge_type] || '🏆'}
                             </div>
 
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-2">
                                 {selectedBadge.badge_name || selectedBadge.name}
                             </h2>
 
-                            <p className="text-slate-400 mb-6">
+                            <p className="text-slate-500 mb-8 leading-relaxed">
                                 {selectedBadge.badge_description || selectedBadge.desc}
                             </p>
 
                             {selectedBadge.locked ? (
-                                <div className="px-4 py-3 bg-white/5 rounded-xl">
-                                    <Lock size={16} className="inline-block mr-2 text-slate-500" />
-                                    <span className="text-slate-400">Keep going to unlock this badge!</span>
+                                <div className="px-4 py-3 bg-slate-50 rounded-xl border border-slate-200">
+                                    <Lock size={16} className="inline-block mr-2 text-slate-400" />
+                                    <span className="text-slate-500 font-medium text-sm">Keep going to unlock this badge!</span>
                                 </div>
                             ) : (
-                                <div className="px-4 py-3 bg-teal-500/10 rounded-xl border border-teal-500/20">
-                                    <span className="text-teal-400">
-                                        Earned on {new Date(selectedBadge.earned_at).toLocaleDateString()}
-                                    </span>
+                                <div className="px-4 py-3 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-700 font-medium text-sm">
+                                    Earned on {new Date(selectedBadge.earned_at).toLocaleDateString()}
                                 </div>
                             )}
 
                             <button
                                 onClick={() => setSelectedBadge(null)}
-                                className="mt-6 w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-white font-medium transition-colors"
+                                className="mt-8 w-full py-3 bg-slate-900 hover:bg-slate-800 rounded-xl text-white font-bold transition-colors shadow-lg shadow-slate-900/20"
                             >
                                 Close
                             </button>
@@ -262,12 +271,12 @@ export default function AchievementsPage() {
             {/* New Badge Celebration Modal */}
             <AnimatePresence>
                 {newBadges.length > 0 && (
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+                    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
                             animate={{ opacity: 1, scale: 1, rotate: 0 }}
                             exit={{ opacity: 0, scale: 0.5 }}
-                            className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center"
+                            className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center"
                         >
                             <motion.div
                                 animate={{ rotate: [0, 10, -10, 0] }}
@@ -277,7 +286,7 @@ export default function AchievementsPage() {
                                 🎉
                             </motion.div>
 
-                            <h2 className="text-2xl font-bold text-white mb-4">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4">
                                 New Badge{newBadges.length > 1 ? 's' : ''} Earned!
                             </h2>
 
@@ -285,7 +294,7 @@ export default function AchievementsPage() {
                                 {newBadges.map(badge => (
                                     <div key={badge.badge_type} className="bg-white/20 rounded-xl p-4">
                                         <span className="text-3xl mr-2">{badge.icon}</span>
-                                        <span className="font-bold text-white">{badge.badge_name}</span>
+                                        <span className="font-bold text-slate-900">{badge.badge_name}</span>
                                     </div>
                                 ))}
                             </div>

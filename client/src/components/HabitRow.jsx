@@ -6,80 +6,78 @@ import { format, subDays, isSameDay } from 'date-fns';
 export default function HabitRow({ habit, onToggle, onEdit, onDelete }) {
     const [showMenu, setShowMenu] = useState(false);
 
-    // Generate days - 7 on mobile, 14 on desktop
+    // Generate days - 14 days to match the reference look (2 weeks)
     const isMobile = window.innerWidth < 768;
-    const dayCount = isMobile ? 7 : 14;
+    const dayCount = 14;
     const days = Array.from({ length: dayCount }).map((_, i) => subDays(new Date(), dayCount - 1 - i));
 
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 5 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            className="p-4 md:p-5 bg-zinc-900/50 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-all group"
+            className="p-5 bg-white border border-slate-200 rounded-2xl hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300 group relative"
         >
-            {/* Main Content */}
-            <div className="flex items-center gap-3 mb-4">
-                {/* Habit Color Indicator - Clean geometric square */}
+            {/* Top Row: Info & Stats */}
+            <div className="flex items-center gap-4 mb-6">
+                {/* Habit Color Indicator */}
                 <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-semibold flex-shrink-0 border"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm transition-transform group-hover:scale-105"
                     style={{
-                        backgroundColor: `${habit.color}15`,
-                        borderColor: `${habit.color}30`,
-                        color: habit.color
+                        backgroundColor: `${habit.color}10`, // Very light wash
+                        color: habit.color,
+                        border: `1px solid ${habit.color}20`
                     }}
                 >
                     {habit.emoji || habit.title.charAt(0).toUpperCase()}
                 </div>
 
-                {/* Habit Info */}
+                {/* Habit Title & Goal */}
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-zinc-200 text-sm md:text-base leading-tight truncate">
+                    <h3 className="font-bold text-slate-900 text-lg leading-tight truncate">
                         {habit.title}
                     </h3>
-                    <p className="text-zinc-600 text-xs truncate">
-                        {habit.identity_goal || 'Daily habit'}
+                    <p className="text-slate-500 text-sm truncate font-medium mt-0.5">
+                        {habit.identity_goal || 'Build consistency'}
                     </p>
                 </div>
 
-                {/* Streak - Minimal */}
-                {habit.streak > 0 && (
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-zinc-800/50 flex-shrink-0">
-                        <Flame size={12} className="text-amber-500" />
-                        <span className="text-xs font-semibold text-zinc-400">{habit.streak}</span>
-                    </div>
-                )}
+                {/* Streak Badge */}
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-50 transition-colors">
+                    <Flame size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
+                    <span className="text-sm font-bold text-slate-600 group-hover:text-amber-700 transition-colors">{habit.streak}</span>
+                </div>
 
-                {/* Menu Button */}
+                {/* Menu Action */}
                 <div className="relative">
                     <button
                         onClick={() => setShowMenu(!showMenu)}
-                        className="p-2 text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800 rounded-lg transition-all opacity-0 group-hover:opacity-100 md:opacity-100"
+                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all opacity-0 group-hover:opacity-100 md:opacity-100"
                     >
-                        <MoreHorizontal size={18} />
+                        <MoreHorizontal size={20} />
                     </button>
 
                     {showMenu && (
                         <>
                             <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="absolute right-0 top-full mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-50 min-w-[140px] py-1 overflow-hidden"
+                                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-xl shadow-xl shadow-slate-200/50 z-50 min-w-[150px] overflow-hidden"
                             >
                                 <button
                                     onClick={() => { setShowMenu(false); onEdit(habit); }}
-                                    className="flex items-center gap-2 w-full px-3 py-2 text-left text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
+                                    className="flex items-center gap-3 w-full px-4 py-3 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                                 >
-                                    <Edit3 size={14} />
-                                    Edit
+                                    <Edit3 size={15} />
+                                    Edit Habit
                                 </button>
                                 <button
                                     onClick={() => { setShowMenu(false); onDelete && onDelete(habit); }}
-                                    className="flex items-center gap-2 w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                                    className="flex items-center gap-3 w-full px-4 py-3 text-left text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors"
                                 >
-                                    <Trash2 size={14} />
+                                    <Trash2 size={15} />
                                     Delete
                                 </button>
                             </motion.div>
@@ -88,47 +86,51 @@ export default function HabitRow({ habit, onToggle, onEdit, onDelete }) {
                 </div>
             </div>
 
-            {/* Heatmap Grid - Clean geometric circles */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-                {days.map((day) => {
+            {/* Days Grid - Scrollable on mobile, flexible on desktop */}
+            <div className="flex items-end justify-between gap-1 overflow-x-auto pb-2 -mx-2 px-2 md:mx-0 md:px-0 scrollbar-hide">
+                {days.map((day, idx) => {
                     const dateStr = format(day, 'yyyy-MM-dd');
                     const isCompleted = habit.completedDates?.includes(dateStr);
                     const isToday = isSameDay(day, new Date());
+                    const isFuture = day > new Date();
 
                     return (
-                        <div key={dateStr} className="flex flex-col items-center gap-1.5 flex-shrink-0">
-                            <span className="text-[10px] font-medium text-zinc-600">
-                                {format(day, 'EE').charAt(0)}
+                        <div key={dateStr} className="flex flex-col items-center gap-2 flex-1 min-w-[40px]">
+                            {/* Day Name (M, T, W...) */}
+                            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                                {format(day, 'EEEEE')}
                             </span>
+
+                            {/* Checkbox */}
                             <button
                                 onClick={() => isToday && onToggle(habit.id)}
                                 disabled={!isToday}
                                 className={`
-                                    w-8 h-8 md:w-9 md:h-9 rounded-lg flex items-center justify-center transition-all duration-200 border
+                                    w-10 h-10 md:w-full aspect-square rounded-xl flex items-center justify-center transition-all duration-300 relative group/box
                                     ${isCompleted
-                                        ? 'border-transparent'
-                                        : 'bg-zinc-900 border-zinc-800'
+                                        ? 'shadow-md shadow-emerald-500/20'
+                                        : 'bg-slate-100 border-2 border-transparent'
                                     }
-                                    ${isToday && !isCompleted ? 'border-teal-500/50 bg-teal-500/5' : ''}
-                                    ${!isToday ? 'cursor-default' : 'cursor-pointer hover:border-zinc-600'}
+                                    ${isToday && !isCompleted ? 'ring-2 ring-emerald-500 ring-offset-2 bg-white !border-slate-200 cursor-pointer hover:bg-emerald-50' : ''}
+                                    ${!isToday && !isCompleted ? 'opacity-80' : ''}
                                 `}
                                 style={{
-                                    backgroundColor: isCompleted ? habit.color : undefined,
+                                    backgroundColor: isCompleted ? (habit.color || '#10b981') : undefined,
                                 }}
                             >
                                 {isCompleted && (
                                     <motion.div
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
+                                        initial={{ scale: 0, rotate: -45 }}
+                                        animate={{ scale: 1, rotate: 0 }}
+                                        className="text-white"
                                     >
-                                        <Check size={14} className="text-white" strokeWidth={2.5} />
+                                        <Check size={20} strokeWidth={3} />
                                     </motion.div>
                                 )}
-                                {isToday && !isCompleted && (
-                                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                                )}
                             </button>
-                            <span className="text-[9px] text-zinc-700">
+
+                            {/* Date Number (12, 13...) */}
+                            <span className={`text-[10px] font-bold ${isToday ? 'text-emerald-600' : 'text-slate-300'}`}>
                                 {format(day, 'd')}
                             </span>
                         </div>

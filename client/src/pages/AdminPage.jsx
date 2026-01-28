@@ -64,7 +64,7 @@ export default function AdminPage() {
                     <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
                         <Shield size={24} className="text-indigo-400" />
                     </div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">Admin Portal</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Admin Portal</h1>
                 </div>
                 <p className="text-slate-400 ml-14">Manage user roles and subscription statuses.</p>
             </header>
@@ -91,7 +91,7 @@ export default function AdminPage() {
 
             <div className="glass-panel rounded-3xl overflow-hidden">
                 <div className="p-6 border-b border-white/5 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white/5">
-                    <h2 className="font-bold text-lg text-white flex items-center gap-2">
+                    <h2 className="font-bold text-lg text-slate-900 flex items-center gap-2">
                         <User size={18} className="text-slate-400" />
                         User Database
                         <span className="text-sm font-normal text-slate-500">({users.length} users)</span>
@@ -101,7 +101,7 @@ export default function AdminPage() {
                         <input
                             type="text"
                             placeholder="Search by username or ID..."
-                            className="w-full pl-11 pr-4 py-2.5 bg-slate-900/50 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all placeholder:text-slate-600"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-900/50 border border-white/10 rounded-xl text-sm text-slate-900 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all placeholder:text-slate-600"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -130,11 +130,11 @@ export default function AdminPage() {
                                     <td className="px-8 py-5 font-mono text-xs text-slate-500 group-hover:text-teal-400">#{user.id}</td>
                                     <td className="px-8 py-5">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500/20 to-indigo-500/20 flex items-center justify-center text-sm font-bold text-white border border-white/10">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500/20 to-indigo-500/20 flex items-center justify-center text-sm font-bold text-slate-900 border border-white/10">
                                                 {user.username.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-white text-base">{user.username}</div>
+                                                <div className="font-bold text-slate-900 text-base">{user.username}</div>
                                                 <div className="text-xs text-slate-500">Joined {new Date(user.created_at || Date.now()).toLocaleDateString()}</div>
                                             </div>
                                         </div>

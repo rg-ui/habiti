@@ -119,7 +119,7 @@ export default function TemplatesPage() {
                             <div className="p-1.5 rounded-md bg-zinc-900 border border-zinc-800">
                                 <CategoryIcon size={16} className="text-zinc-400" />
                             </div>
-                            <h2 className="text-2xl font-bold text-white">{category}</h2>
+                            <h2 className="text-2xl font-bold text-slate-900">{category}</h2>
                         </div>
 
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -148,7 +148,7 @@ export default function TemplatesPage() {
                                         </div>
                                     )}
 
-                                    <h3 className="text-xl font-bold text-white mb-2">{template.name}</h3>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-2">{template.name}</h3>
                                     <p className="text-slate-400 text-sm mb-4">{template.description}</p>
 
                                     {/* Habit Preview */}
@@ -190,14 +190,14 @@ export default function TemplatesPage() {
                         >
                             <button
                                 onClick={() => setSelectedTemplate(null)}
-                                className="absolute top-4 right-4 text-slate-500 hover:text-white"
+                                className="absolute top-4 right-4 text-slate-500 hover:text-slate-900"
                             >
                                 ×
                             </button>
 
                             <div className="flex items-center gap-3 mb-6">
                                 <Sparkles size={24} className="text-teal-400" />
-                                <h2 className="text-2xl font-bold text-white">{selectedTemplate.name}</h2>
+                                <h2 className="text-2xl font-bold text-slate-900">{selectedTemplate.name}</h2>
                                 {selectedTemplate.is_premium && (
                                     <span className="px-2 py-1 bg-amber-500/20 rounded-full border border-amber-500/30 text-xs font-bold text-amber-400">
                                         PRO
@@ -213,7 +213,7 @@ export default function TemplatesPage() {
                                     <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
                                         <div className="w-4 h-4 rounded-full" style={{ backgroundColor: habit.color }} />
                                         <div>
-                                            <p className="text-white font-medium">{habit.title}</p>
+                                            <p className="text-slate-900 font-medium">{habit.title}</p>
                                             <p className="text-xs text-slate-500">{habit.identity_goal}</p>
                                         </div>
                                         {habit.is_challenge && (

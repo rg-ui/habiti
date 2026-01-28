@@ -1,9 +1,36 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LogIn, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, AlertCircle, Eye, EyeOff, Sparkles } from 'lucide-react';
 import api from '../utils/api';
 import logo from '../assets/logo.png';
+
+// Small Gem Component
+const SmallGem = ({ className = '', variant = 1, delay = 0 }) => {
+    const colors = variant === 1
+        ? { primary: '#4ade80', secondary: '#166534', highlight: '#bbf7d0' }
+        : { primary: '#22c55e', secondary: '#064e3b', highlight: '#86efac' };
+
+    return (
+        <motion.div
+            className={`${className}`}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay }}
+        >
+            <motion.svg
+                viewBox="0 0 60 60"
+                className="w-full h-full"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+                <polygon points="30,5 55,30 30,55 5,30" fill={colors.primary} opacity="0.8" />
+                <polygon points="30,5 55,30 30,30" fill={colors.highlight} opacity="0.5" />
+                <polygon points="5,30 30,55 30,30" fill={colors.secondary} opacity="0.9" />
+            </motion.svg>
+        </motion.div>
+    );
+};
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
@@ -36,23 +63,46 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen min-h-[100dvh] flex items-center justify-center relative overflow-hidden bg-slate-950 px-4 py-8">
-            {/* Background blobs */}
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-emerald-500/20 rounded-full blur-[120px] pointer-events-none" />
+        <div className="min-h-screen min-h-[100dvh] flex items-center justify-center relative overflow-hidden px-4 py-8" style={{ backgroundColor: '#ffffff' }}>
+            {/* Background gradient overlays */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-[-20%] left-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-[#4ade80]/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-[#22c55e]/15 rounded-full blur-[120px]" />
+            </div>
+
+            {/* Subtle grid pattern */}
+            <div
+                className="absolute inset-0 opacity-[0.02] pointer-events-none"
+                style={{
+                    backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                                     linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+                    backgroundSize: '60px 60px'
+                }}
+            />
+
+            {/* Floating gems */}
+            <SmallGem className="absolute top-20 left-10 w-12 h-12 hidden md:block" variant={1} delay={0.3} />
+            <SmallGem className="absolute bottom-32 right-16 w-16 h-16 hidden md:block" variant={2} delay={0.5} />
+            <SmallGem className="absolute top-40 right-20 w-10 h-10 hidden md:block" variant={1} delay={0.7} />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-sm p-6 md:p-8 glass-panel rounded-3xl relative z-10 border border-white/5 shadow-2xl shadow-black/50"
+                className="w-full max-w-sm p-6 md:p-8 rounded-3xl relative z-10 bg-white border border-gray-200 shadow-2xl"
             >
                 <div className="text-center mb-8 md:mb-10">
                     <Link to="/">
-                        <img src={logo} alt="Habiti" className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 drop-shadow-lg object-contain" />
+                        <motion.img
+                            src={logo}
+                            alt="Habiti"
+                            className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 drop-shadow-lg object-contain"
+                            whileHover={{ rotate: 360, scale: 1.1 }}
+                            transition={{ duration: 0.5 }}
+                        />
                     </Link>
-                    <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Welcome Back</h2>
-                    <p className="text-slate-400 mt-2 text-sm font-medium">Continue building your best self.</p>
+                    <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h2>
+                    <p className="text-slate-500 mt-2 text-sm font-medium">Continue building your best self.</p>
                 </div>
 
                 {error && (
@@ -71,7 +121,7 @@ export default function LoginPage() {
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
                         <input
                             type="text"
-                            className="input-field"
+                            className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all text-slate-900 placeholder:text-slate-400 font-medium bg-gray-50 border border-gray-200"
                             placeholder="Enter your username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -85,7 +135,7 @@ export default function LoginPage() {
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                className="input-field pr-12"
+                                className="w-full px-4 py-3 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all text-slate-900 placeholder:text-slate-400 font-medium bg-gray-50 border border-gray-200"
                                 placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -95,7 +145,7 @@ export default function LoginPage() {
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-white transition-colors"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-600 transition-colors"
                             >
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
@@ -106,13 +156,17 @@ export default function LoginPage() {
                         type="submit"
                         disabled={isLoading}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full py-4 bg-gradient-to-r from-teal-400 to-teal-500 text-slate-950 font-bold rounded-xl shadow-xl shadow-teal-500/20 active:shadow-teal-500/30 transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                        whileHover={{ scale: 1.02 }}
+                        className="w-full py-4 font-bold rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed bg-emerald-500 text-white hover:bg-emerald-600"
+                        style={{
+                            boxShadow: '0 10px 40px -10px rgba(16, 185, 129, 0.4)'
+                        }}
                     >
                         {isLoading ? (
                             <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full"
+                                className="w-5 h-5 border-2 border-[#ffffff] border-t-transparent rounded-full"
                             />
                         ) : (
                             <>
@@ -123,13 +177,19 @@ export default function LoginPage() {
                     </motion.button>
                 </form>
 
-                <p className="mt-6 md:mt-8 text-center text-slate-400 text-sm font-medium">
-                    New here? <Link to="/signup" className="text-teal-400 font-bold active:text-teal-300 transition-colors">Create account</Link>
+                <p className="mt-6 md:mt-8 text-center text-slate-600 text-sm font-medium">
+                    New here? <Link to="/signup" className="text-emerald-600 font-bold hover:text-emerald-700 transition-colors">Create account</Link>
                 </p>
 
-                <Link to="/" className="block mt-4 text-center text-slate-600 text-xs hover:text-slate-400 transition-colors">
+                <Link to="/" className="block mt-4 text-center text-slate-400 text-xs hover:text-slate-600 transition-colors">
                     ← Back to home
                 </Link>
+
+                <div className="mt-8 flex justify-center gap-6 text-xs text-slate-400">
+                    <a href="#" className="hover:text-slate-600 transition-colors">Privacy</a>
+                    <a href="#" className="hover:text-slate-600 transition-colors">Terms</a>
+                    <a href="mailto:habiti.connect@gmail.com" className="hover:text-slate-600 transition-colors">Contact</a>
+                </div>
             </motion.div>
         </div>
     );

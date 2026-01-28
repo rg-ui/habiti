@@ -22,7 +22,7 @@ export const ProOverlay = ({ title, children }) => (
                 <div className="p-3 bg-amber-400/20 rounded-full border border-amber-400/30">
                     <Lock size={20} className="text-amber-400" />
                 </div>
-                <span className="text-white font-bold text-sm">{title || 'Unlock with Pro'}</span>
+                <span className="text-slate-900 font-bold text-sm">{title || 'Unlock with Pro'}</span>
                 <span className="text-amber-400 text-xs font-medium flex items-center gap-1">
                     Upgrade <ArrowRight size={12} />
                 </span>
@@ -54,14 +54,14 @@ export const ProFeatureCard = ({
                 <motion.div
                     animate={{ y: [0, -5, 0] }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className={`p-4 rounded-2xl bg-gradient-to-br ${gradient} shadow-lg text-white`}
+                    className={`p-4 rounded-2xl bg-gradient-to-br ${gradient} shadow-lg text-slate-900`}
                 >
                     <Icon size={28} strokeWidth={2} />
                 </motion.div>
                 <ProBadge size="md" />
             </div>
 
-            <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
             <p className="text-slate-400 text-sm mb-6 leading-relaxed">{description}</p>
 
             {features.length > 0 && (
@@ -98,7 +98,7 @@ export const HabitLimitBanner = ({ currentCount, maxCount = 3 }) => (
                     <Lock size={24} className="text-amber-400" />
                 </div>
                 <div>
-                    <h4 className="text-white font-bold">Habit Limit Reached</h4>
+                    <h4 className="text-slate-900 font-bold">Habit Limit Reached</h4>
                     <p className="text-slate-400 text-sm">
                         You're using {currentCount}/{maxCount} habits. Upgrade to Pro for unlimited habits.
                     </p>
@@ -126,7 +126,7 @@ export const StreakFreezeCard = ({ isPro, freezesLeft = 0, onUseFreeze }) => {
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
-                                <span className="text-white font-bold text-sm">Streak Freeze</span>
+                                <span className="text-slate-900 font-bold text-sm">Streak Freeze</span>
                                 <ProBadge />
                             </div>
                             <p className="text-slate-400 text-xs">Protect your streaks on off days</p>
@@ -148,7 +148,7 @@ export const StreakFreezeCard = ({ isPro, freezesLeft = 0, onUseFreeze }) => {
                         <span className="text-2xl">🧊</span>
                     </div>
                     <div>
-                        <span className="text-white font-bold text-sm">Streak Freeze</span>
+                        <span className="text-slate-900 font-bold text-sm">Streak Freeze</span>
                         <p className="text-slate-400 text-xs">{freezesLeft} freezes available this month</p>
                     </div>
                 </div>

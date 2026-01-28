@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const authenticateToken = require('../middleware/auth');
 
-// Get weekly progress (Last 7 days)
+// Get weekly progress (Last 7 days) - Pro only
 router.get('/weekly', authenticateToken, async (req, res) => {
     try {
         if (!req.user.is_pro) return res.status(403).json({ error: "Upgrade to Pro" });
@@ -12,6 +12,32 @@ router.get('/weekly', authenticateToken, async (req, res) => {
             SELECT 
                 to_char(date_trunc('day', d)::date, 'Dy') as day_name,
                 COUNT(hl.id) as completed_count
+            FROM generate_series(
+                CURRENT_DATE - INTERVAL '6 days',
+                CURRENT_DATE,
+                '1 day'::interval
+            ) d
+            LEFT JOIN habit_logs hl ON hl.log_date = d::date 
+            LEFT JOIN habits h ON hl.habit_id = h.id AND h.user_id = $1
+            GROUP BY d
+            ORDER BY d ASC
+        `, [req.user.id]);
+
+        res.json(weeklyStats.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Get weekly progress for all users (Last 7 days)
+router.get('/weekly-progress', authenticateToken, async (req, res) => {
+    try {
+        const weeklyStats = await pool.query(`
+            SELECT 
+                to_char(d::date, 'MM/DD') as date,
+                d::date as full_date,
+                COALESCE(COUNT(hl.id), 0)::integer as value
             FROM generate_series(
                 CURRENT_DATE - INTERVAL '6 days',
                 CURRENT_DATE,

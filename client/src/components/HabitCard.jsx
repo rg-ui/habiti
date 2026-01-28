@@ -42,7 +42,7 @@ export default function HabitCard({ habit, onToggle, onEdit }) {
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <Flame size={16} className={`${streak > 0 ? 'text-amber-500 fill-amber-500' : 'text-slate-700'}`} />
-                        <span className={`text-2xl font-bold ${streak > 0 ? 'text-white' : 'text-slate-600'}`}>{streak}</span>
+                        <span className={`text-2xl font-bold ${streak > 0 ? 'text-slate-900' : 'text-slate-600'}`}>{streak}</span>
                     </div>
                     <span className="text-xs font-semibold text-slate-600 pl-6">Day streak</span>
                 </div>
