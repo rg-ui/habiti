@@ -18,13 +18,61 @@ import logo from './assets/logo.png';
 
 import Chatbot from './components/Chatbot';
 
+import { useEffect, useState } from 'react';
+import { supabase } from './utils/supabaseClient';
+
 const ProtectedLayout = () => {
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  if (!token) return <Navigate to="/login" replace />;
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      checkAdmin(session?.user?.id);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      checkAdmin(session?.user?.id);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const checkAdmin = async (userId) => {
+    if (!userId) {
+      setIsAdmin(false);
+      return;
+    }
+    // Check public.users table for is_admin flag
+    const { data } = await supabase
+      .from('users')
+      .select('is_admin')
+      .eq('auth_id', userId) // Changed to match our new schema
+      .single();
+
+    setIsAdmin(!!data?.is_admin);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-white text-emerald-600">Loading...</div>;
+  }
+
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
 
   const navItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -36,7 +84,7 @@ const ProtectedLayout = () => {
     { path: '/subscription', icon: Star, label: 'Pro' }
   ];
 
-  if (user.is_admin) {
+  if (isAdmin) {
     navItems.push({ path: '/admin', icon: Shield, label: 'Admin' });
   }
 
@@ -89,11 +137,7 @@ const ProtectedLayout = () => {
         </nav>
 
         <div className="p-4 border-t border-gray-200">
-          <button onClick={() => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-          }} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-slate-500 hover:text-red-500 transition-all duration-200 justify-center lg:justify-start hover:bg-red-50">
+          <button onClick={handleSignOut} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-slate-500 hover:text-red-500 transition-all duration-200 justify-center lg:justify-start hover:bg-red-50">
             <LogOut size={18} />
             <span className="hidden lg:block text-sm font-medium">Sign Out</span>
           </button>
@@ -145,11 +189,7 @@ const ProtectedLayout = () => {
 
               <div className="pt-4 mt-4 border-t border-gray-200">
                 <button
-                  onClick={() => {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    window.location.href = '/login';
-                  }}
+                  onClick={handleSignOut}
                   className="flex items-center gap-3 px-4 py-3 w-full text-slate-500 hover:text-red-500 rounded-lg transition-colors hover:bg-red-50"
                 >
                   <LogOut size={20} />

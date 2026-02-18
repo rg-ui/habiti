@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, AlertCircle, Eye, EyeOff, Check, X, Sparkles } from 'lucide-react';
-import api from '../utils/api';
+import { supabase } from '../utils/supabaseClient';
 import logo from '../assets/logo.png';
 
 // Small Gem Component
@@ -33,7 +33,7 @@ const SmallGem = ({ className = '', variant = 1, delay = 0 }) => {
 };
 
 export default function SignupPage() {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -52,13 +52,8 @@ export default function SignupPage() {
         setError('');
 
         // Client-side validation
-        if (username.length < 3) {
-            setError('Username must be at least 3 characters');
-            return;
-        }
-
-        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-            setError('Username can only contain letters, numbers, and underscores');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setError('Please enter a valid email address');
             return;
         }
 
@@ -74,17 +69,19 @@ export default function SignupPage() {
 
         setIsLoading(true);
         try {
-            const res = await api.post('/auth/signup', { username, password });
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+            });
 
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token);
-                localStorage.setItem('user', JSON.stringify(res.data.user));
+            if (error) throw error;
+
+            if (data.user) {
+                // Auto login or redirect
                 navigate('/dashboard');
-            } else {
-                navigate('/login');
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Signup failed. Please try again.');
+            setError(err.message || 'Signup failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -151,19 +148,19 @@ export default function SignupPage() {
 
                 <form onSubmit={handleSignup} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email</label>
                         <input
-                            type="text"
+                            type="email"
                             className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4ade80]/50 transition-all text-slate-900 placeholder:text-slate-600 font-medium"
                             style={{
                                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                 border: '1px solid #e5e7eb, 0.5)'
                             }}
-                            placeholder="Choose a username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
-                            autoComplete="username"
+                            autoComplete="email"
                             autoCapitalize="none"
                         />
                     </div>

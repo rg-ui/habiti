@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, AlertCircle, Eye, EyeOff, Sparkles } from 'lucide-react';
-import api from '../utils/api';
+import { supabase } from '../utils/supabaseClient';
 import logo from '../assets/logo.png';
 
 // Small Gem Component
@@ -33,7 +33,7 @@ const SmallGem = ({ className = '', variant = 1, delay = 0 }) => {
 };
 
 export default function LoginPage() {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
@@ -42,8 +42,8 @@ export default function LoginPage() {
 
     // Clear session on load to ensure fresh login
     React.useEffect(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        // localStorage.removeItem('token');
+        // localStorage.removeItem('user');
     }, []);
 
     const handleLogin = async (e) => {
@@ -51,12 +51,15 @@ export default function LoginPage() {
         setIsLoading(true);
         setError('');
         try {
-            const res = await api.post('/auth/login', { username, password });
-            localStorage.setItem('token', res.data.token);
-            localStorage.setItem('user', JSON.stringify(res.data.user));
+            const { error } = await supabase.auth.signInWithPassword({
+                email: username, // Supabase uses email by default, but we can stick with 'username' variable name if we change input type or assume email
+                password,
+            });
+
+            if (error) throw error;
             navigate('/dashboard');
         } catch (err) {
-            setError(err.response?.data?.error || 'Login failed');
+            setError(err.message || 'Login failed');
         } finally {
             setIsLoading(false);
         }
@@ -118,15 +121,15 @@ export default function LoginPage() {
 
                 <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
                     <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email</label>
                         <input
-                            type="text"
+                            type="email"
                             className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all text-slate-900 placeholder:text-slate-400 font-medium bg-gray-50 border border-gray-200"
-                            placeholder="Enter your username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
-                            autoComplete="username"
+                            autoComplete="email"
                             autoCapitalize="none"
                         />
                     </div>
