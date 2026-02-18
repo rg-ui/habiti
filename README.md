@@ -89,21 +89,24 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## 🌐 Deployment
 
-### Option 1: Vercel (Frontend) + Render (Backend)
+### Option 1: Vercel (Frontend) + Render (Backend) + Supabase (DB)
 
-#### Deploy Backend on Render
-1. Go to [Render.com](https://render.com) and create a PostgreSQL database
-2. Create a new Web Service and connect your repo
-3. Configure:
+#### 1. Deploy Database on Supabase
+1. Create a project on [Supabase.com](https://supabase.com).
+2. Get the connection string from Settings -> Database (Use Session Mode/Port 5432).
+
+#### 2. Deploy Backend on Render
+1. Create a new Web Service on Render.
+2. Configure settings:
    - **Root Directory**: `server`
    - **Build Command**: `npm install`
    - **Start Command**: `node index.js`
-4. Add environment variables:
-   - `DATABASE_URL`: Your Render PostgreSQL internal URL
+3. Set environment variables:
+   - `DATABASE_URL`: Your Supabase connection string.
    - `JWT_SECRET`: A secure random string
    - `NODE_ENV`: `production`
 
-#### Deploy Frontend on Vercel
+#### 3. Deploy Frontend on Vercel
 1. Go to [Vercel.com](https://vercel.com) and import your repo
 2. Configure:
    - **Framework**: Vite
@@ -111,9 +114,9 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 3. Add environment variable:
    - `VITE_API_URL`: Your Render backend URL (e.g., `https://habiti-api.onrender.com`)
 
-### Option 2: Netlify (Frontend) + Render (Backend)
+### Option 2: Netlify (Frontend) + Render (Backend) + Supabase (DB)
 
-1. Deploy backend on Render (same as above)
+1. Deploy DB on Supabase and Backend on Render (same as above)
 2. Deploy frontend on Netlify:
    - Connect your repo
    - **Base directory**: `client`

@@ -3,7 +3,8 @@
 This project consists of a **Vite React Client** and an **Express Server**. To deploy this effectively, we recommend splitting the services:
 
 1.  **Frontend**: Deployed on **Vercel** (Free, fast global CDN).
-2.  **Backend & Database**: Deployed on **Render** (Free tier available for Web Services and Postgres).
+2.  **Backend**: Deployed on **Render** (Web Service).
+3.  **Database**: Deployed on **Supabase** (Managed PostgreSQL).
 
 ---
 
@@ -16,31 +17,30 @@ Make sure your project is pushed to a GitHub repository.
 
 ---
 
-## Part 1: Deploy Backend (Render)
+## Part 1: Deploy Backend (Render Web Service + Supabase DB)
 
-1.  **Sign up/Login** to [Render.com](https://render.com).
-2.  **Create a Database**:
-    *   Click "New +" -> "PostgreSQL".
-    *   Name: `habiti-db`.
-    *   Region: Closest to you (e.g., Singapore, Frankfurt, Oregon).
-    *   Click **Create Database**.
-    *   **Keep the page open**; you'll need the "Internal Database URL" and "External Database URL" soon.
+1.  **Set up Database (Supabase)**:
+    *   **Sign up/Login** to [Supabase.com](https://supabase.com).
+    *   **Create a new Project**:
+        *   Click "New Project".
+        *   Choose your organization, name: `habiti-db`, password (save this!), and region.
+        *   Click **Create new project**.
+    *   **Get Connection String**:
+        *   Go to **Project Settings** -> **Database**.
+        *   Under **Connection String**, select **Node.js**.
+        *   Copy the URL. (It looks like `postgresql://postgres:[PASSWORD]@...`).
+        *   *Tip: Use port 5432 (Session Mode) for best compatibility.*
 
-3.  **Create the Web Service**:
+2.  **Deploy Backend (Render)**:
+    *   **Sign up/Login** to [Render.com](https://render.com).
     *   Click "New +" -> "Web Service".
     *   Connect your GitHub repository.
     *   **Root Directory**: `server`
     *   **Build Command**: `npm install`
     *   **Start Command**: `node index.js`
     *   **Environment Variables** (Add these):
-        *   `DB_HOST`: (From your Render DB details)
-        *   `DB_USER`: (From Render DB)
-        *   `DB_PASS`: (From Render DB)
-        *   `DB_NAME`: (From Render DB)
-        *   `DB_PORT`: `5432`
-        *   *Alternatively, if your app uses a connection string:*
-        *   `DATABASE_URL`: Copy the **Internal Database URL** from the database you just created.
-        *   `JWT_SECRET`: Generate a random strong string (e.g., use a password generator).
+        *   `DATABASE_URL`: Paste your Supabase Connection String. **Replace `[PASSWORD]` with your actual password.**
+        *   `JWT_SECRET`: Generate a random strong string.
     *   Click **Create Web Service**.
 
 4.  **Wait for Build**: Once the deploy finishes, Render will give you a public URL (e.g., `https://habiti-server.onrender.com`). **Copy this URL.**
